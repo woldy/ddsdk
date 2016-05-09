@@ -1,0 +1,18 @@
+{
+    "name": "woldy/ddsdk",
+    "description": "a very zhazha code for dingtalk to be a sdk",
+	"license":"MIT",
+	"keywords":["ding"],
+    "authors": [
+        {
+            "name": "woldy",
+            "email": "king@woldy.net"
+        }
+    ],
+    "require": {},
+	"autoload": {
+		"psr-4": {
+            "Woldy\\ddsdk\\": "src/"
+        }
+    }
+}
