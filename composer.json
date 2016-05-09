@@ -9,7 +9,9 @@
             "email": "king@woldy.net"
         }
     ],
-    "require": {},
+    "require": {
+        "nategood/httpful": "*"
+    },
 	"autoload": {
 		"psr-4": {
             "Woldy\\ddsdk\\": "src/"

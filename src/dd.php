@@ -1,15 +1,21 @@
 <?php
 namespace Woldy\ddsdk;
 use Illuminate\Config\Repository;
+use Woldy\ddsdk\Components\token;
 class dd{
 	static $config;
-	static $version=0;
+	static $token;
+	static $ACCESS_TOKE;
 	public function __construct(Repository $config){
 		self::$config = $config;
+		self::$token = new token($config);
+		self::$ACCESS_TOKE=self::$token->getAccessToken();
 	}
 
-	public static function test(){
-		echo 'xxx';
+
+
+	public static function getJsConfig(){
+		return self::$token->getJsConfig();
 	}
 	// public static function getcss(){
 	// }
