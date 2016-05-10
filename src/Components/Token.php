@@ -2,7 +2,7 @@
 namespace Woldy\ddsdk\Components;
 use Cache;
 use Httpful\Request;
-class token{
+class Token{
 	private $AgentID;
 	private $CorpID;
 	private $CorpSecret;

@@ -8,7 +8,7 @@ class dd{
 	static $ACCESS_TOKE;
 	public function __construct(Repository $config){
 		self::$config = $config;
-		self::$token = new token($config);
+		self::$token = new Token($config);
 		self::$ACCESS_TOKE=self::$token->getAccessToken();
 	}
 
