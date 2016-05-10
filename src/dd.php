@@ -1,7 +1,7 @@
 <?php
 namespace Woldy\ddsdk;
 use Illuminate\Config\Repository;
-use Woldy\ddsdk\Components\token;
+use Woldy\ddsdk\Components\Token;
 class dd{
 	static $config;
 	static $token;
