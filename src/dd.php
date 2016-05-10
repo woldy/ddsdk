@@ -12,26 +12,44 @@ class dd{
 		self::$ACCESS_TOKE=self::$token->getAccessToken();
 	}
 
-
-
+	/**
+	 * 取得JS SDK 配置
+	 * @Author   Woldy
+	 * @DateTime 2016-05-09T17:01:32+0800
+	 */
 	public static function getJsConfig(){
 		return self::$token->getJsConfig();
 	}
-	// public static function getcss(){
-	// }
-	// public static function admin($tpl,$val=array()){
-	// 	$val['version']=self::$version;
-	// 	$config=self::getconf('admin_cfg');
-	// 	$val['template']=$config['tpl_base'].'.'.$tpl;
-	// 	$val=array_merge($val,$config);
-	// 	$layout=$config['tpl_admin'].'.'.$config['tpl_layout'];
-	//     return view($layout,$val);	  	
-	// }
-	// //获取模板配置
-	// public static function getconf($option){
-	// 	$conf=self::$config->get('tpl.'.$option);
-	// 	return $conf;
-	// }
-	// public static function portal(){
-	// }
+
+	/**
+	 * 根据免登CODE获取用户信息
+	 * @Author   Woldy
+	 * @DateTime 2016-05-09T17:03:07+0800
+	 * @return   [type]                   [description]
+	 */
+	public static function getUserInfoByCode($CODE){
+
+	}
+
+	/**
+	 * 根据UserID获取用户信息
+	 * @Author   Woldy
+	 * @DateTime 2016-05-09T17:03:34+0800
+	 * @return   [type]                   [description]
+	 */
+	public static function getUserInfoByUid(){
+
+	}
+
+	/**
+	 * 发送消息
+	 * @Author   Woldy
+	 * @DateTime 2016-05-09T19:57:22+0800
+	 * @param    string                   $type    [description]
+	 * @param    [type]                   $content [description]
+	 * @return   [type]                            [description]
+	 */
+	public static function sendMessage($touser,$toparty,$type='text',$content){
+
+	}
 } 
