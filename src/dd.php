@@ -3,6 +3,7 @@ namespace Woldy\ddsdk;
 use Illuminate\Config\Repository;
 use Woldy\ddsdk\Components\Token;
 use Woldy\ddsdk\Components\Message;
+use Woldy\ddsdk\Components\Contacts;
 use Illuminate\Support\Facades\Input;
 class dd{
 	static $config;
@@ -29,8 +30,9 @@ class dd{
 	 * @DateTime 2016-05-09T17:03:07+0800
 	 * @return   [type]                   [description]
 	 */
-	public static function getUserInfoByCode($CODE){
-
+	public static function getUserInfoByCode(){
+		$code=Input::get('authcode');
+		return Contacts::getUserInfoByCode(self::$ACCESS_TOKE,$code);
 	}
 
 	/**
