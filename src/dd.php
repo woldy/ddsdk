@@ -69,4 +69,15 @@ class dd{
 		//echo $code;
 		return Message::sendMessageByCode(self::$ACCESS_TOKE,self::$config,$code);
 	}
+
+
+	public static function snsLogin($code){
+		$accesstoken=self::$token->getSnsAccessToken();
+		$persistent=self::$token->getPersistent($accesstoken,$code);
+		$snscode=self::$token->getSnsToken($accesstoken,$persistent);
+		$userinfo=Contacts::getUserInfoBySns($snscode);
+		$userid=Contacts::getUserIdByUnionId(self::$ACCESS_TOKE,$userinfo->unionid);
+		$userinfo=Contacts::getUserInfoByUid(self::$ACCESS_TOKE,$userid);
+		return $userinfo;
+	}
 } 

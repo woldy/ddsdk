@@ -3,6 +3,15 @@ namespace Woldy\ddsdk\Components;
 use Cache;
 use Httpful\Request;
 class Message{
+    /**
+     * 根据加密串发送企业消息
+     * @Author   Woldy
+     * @DateTime 2016-05-12T09:15:19+0800
+     * @param    [type]                   $ACCESS_TOKE [description]
+     * @param    [type]                   $config      [description]
+     * @param    [type]                   $code        [description]
+     * @return   [type]                                [description]
+     */
 	public static function sendMessageByCode($ACCESS_TOKE,$config,$code){
 		$join=self::decode($code);
 		$param=json_decode($join,true);
@@ -20,6 +29,18 @@ class Message{
  
 	}
 
+    /**
+     * 根据详细参数发送企业消息
+     * @Author   Woldy
+     * @DateTime 2016-05-12T09:15:39+0800
+     * @param    [type]                   $touser      [description]
+     * @param    [type]                   $toparty     [description]
+     * @param    [type]                   $content     [description]
+     * @param    [type]                   $AgentID     [description]
+     * @param    [type]                   $ACCESS_TOKE [description]
+     * @param    string                   $type        [description]
+     * @return   [type]                                [description]
+     */
 	public static function sendMessage($touser,$toparty,$content,$AgentID,$ACCESS_TOKE,$type='text'){
 		//$content=iconv('GB2312', 'UTF-8', $content);
 		//var_dump($content);
@@ -52,7 +73,14 @@ class Message{
 		}
 	}
 
-
+    /**
+     * 加密串函数
+     * @Author   Woldy
+     * @DateTime 2016-05-12T09:16:37+0800
+     * @param    string                   $string [description]
+     * @param    string                   $skey   [description]
+     * @return   [type]                           [description]
+     */
 	static function encode($string = '', $skey = 'woldy') {
     	$strArr = str_split(base64_encode($string));
     	$strCount = count($strArr);
@@ -61,6 +89,14 @@ class Message{
     	return str_replace(array('=', '+', '/'), array('O0O0O', 'o000o', 'oo00o'), join('', $strArr));
 	}
 
+    /**
+     * 解密串函数
+     * @Author   Woldy
+     * @DateTime 2016-05-12T09:16:56+0800
+     * @param    string                   $string [description]
+     * @param    string                   $skey   [description]
+     * @return   [type]                           [description]
+     */
 	static function decode($string = '', $skey = 'woldy') {
     	$strArr = str_split(str_replace(array('O0O0O', 'o000o', 'oo00o'), array('=', '+', '/'), $string), 2);
     	$strCount = count($strArr);
