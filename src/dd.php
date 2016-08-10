@@ -24,6 +24,19 @@ class dd{
 		return self::$token->getJsConfig();
 	}
 
+
+	/**
+	 * 获取SSO配置
+	 */
+	public static function getSsoConfig($id){
+		$ssolist=self::$config->get('dd')['sso'];
+		if(!array_key_exists($id,$ssolist)){
+			die('wrong id!');
+		}else{
+			return $ssolist[$id];
+		}
+	}
+
 	/**
 	 * 根据免登CODE获取用户信息
 	 * @Author   Woldy

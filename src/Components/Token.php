@@ -153,6 +153,7 @@ class Token{
 
 
 
+
 	public function getSsoToken(){
 		//https://oapi.dingtalk.com/sso/gettoken?corpid=id&corpsecret=ssosecret
 	}
