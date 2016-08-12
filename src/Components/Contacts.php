@@ -93,8 +93,16 @@ class contacts{
         return $userinfo;
     }
 
+    /**
+     * 根据unionId获取员工信息
+     * @Author   Woldy
+     * @DateTime 2016-08-12T19:16:16+0800
+     * @param    [type]                   $ACCESS_TOKEN [description]
+     * @param    [type]                   $unionid      [description]
+     * @return   [type]                                 [description]
+     */
     public static function  getUserIdByUnionId($ACCESS_TOKEN,$unionid){
-             $param=http_build_query(
+            $param=http_build_query(
                 array(
                     'access_token'=>$ACCESS_TOKEN,
                     'unionid'=>$unionid
@@ -113,5 +121,34 @@ class contacts{
             $userid = $response->body->userid;
  
         return $userid;       
+    }
+
+    public static function delUserByIds($ACCESS_TOKEN,$ids){
+        if(!is_array($ids)){
+            $ids=explode(',', $ids);
+        }
+
+        foreach ($ids as $id) {
+            $param=http_build_query(
+                array(
+                    'access_token'=>$ACCESS_TOKEN,
+                    'userid'=>$id
+                )
+            );
+            //die('https://oapi.dingtalk.com/user/delete?'.$param);
+            $response = Request::get('https://oapi.dingtalk.com/user/delete?'.$param)->send();
+            if ($response->hasErrors()){
+                var_dump($response);
+                exit;
+            }
+            if ($response->body->errcode != 0){
+                var_dump($response->body);
+                exit;
+            }
+
+            echo "$id,";
+        }
+
+        return true;
     }
 }

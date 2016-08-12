@@ -93,4 +93,9 @@ class dd{
 		$userinfo=Contacts::getUserInfoByUid(self::$ACCESS_TOKE,$userid);
 		return $userinfo;
 	}
+
+	public static function delUser($ids){
+		$accesstoken=self::$ACCESS_TOKE;
+		return Contacts::delUserByIds($accesstoken,$ids);
+	}
 } 
