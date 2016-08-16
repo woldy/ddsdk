@@ -54,8 +54,8 @@ class dd{
 	 * @DateTime 2016-05-09T17:03:34+0800
 	 * @return   [type]                   [description]
 	 */
-	public static function getUserInfoByUid(){
-
+	public static function getUserInfoByUid($uid){
+		return Contacts::getUserInfoByUid(self::$ACCESS_TOKE,$uid);
 	}
 
 	/**
@@ -97,5 +97,10 @@ class dd{
 	public static function delUser($ids){
 		$accesstoken=self::$ACCESS_TOKE;
 		return Contacts::delUserByIds($accesstoken,$ids);
+	}
+
+	public static function addUser($user){
+		$accesstoken=self::$ACCESS_TOKE;
+		return Contacts::addUser($accesstoken,$user);
 	}
 } 

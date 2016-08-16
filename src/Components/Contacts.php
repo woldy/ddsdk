@@ -55,13 +55,56 @@ class contacts{
             	exit;
         	}
         	if ($response->body->errcode != 0){
-            	var_dump($response->body);
-            	exit;
+            	// var_dump($response->body);
+            	// exit;
         	}
-            $user = $response->body;
+          
  
-        return $user;
+        return $response->body;
 	}
+
+
+
+    /**
+     * 创建用户
+     * @Author   Woldy
+     * @DateTime 2016-08-16T13:56:23+0800
+     * @return   [type]                   [description]
+     * // {
+//     "userid": "zhangsan",
+//     "name": "张三",
+//     "orderInDepts" : "{1:10, 2:20}",
+//     "department": [1, 2],
+//     "position": "产品经理",
+//     "mobile": "15913215421",
+//     "tel" : "010-123333",
+//     "workPlace" :"",
+//     "remark" : "",
+//     "email": "zhangsan@gzdev.com",
+//     "jobnumber": "111111",
+//     "isHide": false,
+//     "isSenior": false,
+//     "extattr": {
+//                 "爱好":"旅游",
+//                 "年龄":"24"
+//                 }
+// }
+     */
+    public static function addUser($ACCESS_TOKEN,$user){
+        $response = Request::post('https://oapi.dingtalk.com/user/create?access_token='.$ACCESS_TOKEN)
+            ->body(json_encode($user))
+            ->sendsJson()
+            ->send();
+        if ($response->hasErrors()){
+            var_dump($response);
+            exit;
+        }
+        if ($response->body->errcode != 0){
+            //  var_dump($response->body);
+            // exit;
+        }
+        return $response->body;
+    }
 
 
     /**
@@ -84,8 +127,7 @@ class contacts{
                 exit;
             }
             if ($response->body->errcode != 0){
-                var_dump($response->body);
-                exit;
+               return $response->body;
             }
 
             $userinfo = $response->body->user_info;
@@ -115,8 +157,7 @@ class contacts{
                 exit;
             }
             if ($response->body->errcode != 0){
-                var_dump($response->body);
-                exit;
+                return $response->body;
             }
             $userid = $response->body->userid;
  
@@ -127,7 +168,6 @@ class contacts{
         if(!is_array($ids)){
             $ids=explode(',', $ids);
         }
-
         foreach ($ids as $id) {
             $param=http_build_query(
                 array(
@@ -138,17 +178,14 @@ class contacts{
             //die('https://oapi.dingtalk.com/user/delete?'.$param);
             $response = Request::get('https://oapi.dingtalk.com/user/delete?'.$param)->send();
             if ($response->hasErrors()){
-                var_dump($response);
-                exit;
+               // var_dump($response);
+               // exit;
             }
             if ($response->body->errcode != 0){
-                var_dump($response->body);
-                exit;
+                //return $response->body;
             }
-
-            echo "$id,";
         }
 
-        return true;
+        return $response->body;
     }
 }
