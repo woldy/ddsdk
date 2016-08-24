@@ -8,11 +8,11 @@ use Illuminate\Support\Facades\Input;
 class dd{
 	static $config;
 	static $token;
-	static $ACCESS_TOKE;
+	static $ACCESS_TOKEN;
 	public function __construct(Repository $config){
 		self::$config = $config;
 		self::$token = new Token($config);
-		self::$ACCESS_TOKE=self::$token->getAccessToken();
+		self::$ACCESS_TOKEN=self::$token->getAccessToken();
 	}
 
 	/**
@@ -45,7 +45,7 @@ class dd{
 	 */
 	public static function getUserInfoByCode(){
 		$code=Input::get('authcode');
-		return Contacts::getUserInfoByCode(self::$ACCESS_TOKE,$code);
+		return Contacts::getUserInfoByCode(self::$ACCESS_TOKEN,$code);
 	}
 
 	/**
@@ -55,7 +55,7 @@ class dd{
 	 * @return   [type]                   [description]
 	 */
 	public static function getUserInfoByUid($uid){
-		return Contacts::getUserInfoByUid(self::$ACCESS_TOKE,$uid);
+		return Contacts::getUserInfoByUid(self::$ACCESS_TOKEN,$uid);
 	}
 
 	/**
@@ -80,27 +80,77 @@ class dd{
 	public static function sendMessageByCode(){
 		$code=Input::get('code');
 		//echo $code;
-		return Message::sendMessageByCode(self::$ACCESS_TOKE,self::$config,$code);
+		return Message::sendMessageByCode(self::$ACCESS_TOKEN,self::$config,$code);
 	}
 
 
+	/**
+	 * 扫码登录
+	 * @Author   Woldy
+	 * @DateTime 2016-08-23T11:17:36+0800
+	 * @param    [type]                   $code [description]
+	 * @return   [type]                         [description]
+	 */
 	public static function snsLogin($code){
 		$accesstoken=self::$token->getSnsAccessToken();
 		$persistent=self::$token->getPersistent($accesstoken,$code);
 		$snscode=self::$token->getSnsToken($accesstoken,$persistent);
 		$userinfo=Contacts::getUserInfoBySns($snscode);
-		$userid=Contacts::getUserIdByUnionId(self::$ACCESS_TOKE,$userinfo->unionid);
-		$userinfo=Contacts::getUserInfoByUid(self::$ACCESS_TOKE,$userid);
+		$userid=Contacts::getUserIdByUnionId(self::$ACCESS_TOKEN,$userinfo->unionid);
+		$userinfo=Contacts::getUserInfoByUid(self::$ACCESS_TOKEN,$userid);
 		return $userinfo;
 	}
 
+	/**
+	 * 删除用户
+	 * @Author   Woldy
+	 * @DateTime 2016-08-23T11:17:48+0800
+	 * @param    [type]                   $ids [description]
+	 * @return   [type]                        [description]
+	 */
 	public static function delUser($ids){
-		$accesstoken=self::$ACCESS_TOKE;
+		$accesstoken=self::$ACCESS_TOKEN;
 		return Contacts::delUserByIds($accesstoken,$ids);
 	}
 
+	/**
+	 * 增加用户
+	 * @Author   Woldy
+	 * @DateTime 2016-08-23T11:17:58+0800
+	 * @param    [type]                   $user [description]
+	 */
 	public static function addUser($user){
-		$accesstoken=self::$ACCESS_TOKE;
+		$accesstoken=self::$ACCESS_TOKEN;
 		return Contacts::addUser($accesstoken,$user);
+	}
+
+	public static function createChat(){
+		$accesstoken=self::$ACCESS_TOKEN;
+		return Contacts::createChat($accesstoken);			
+	}
+
+	/**
+	 * 人员去重
+	 * @Author   Woldy
+	 * @DateTime 2016-08-23T18:02:57+0800
+	 * @return   [type]                   [description]
+	 */
+	public function cleanDouble($id1,$id2){
+		$accesstoken=self::$ACCESS_TOKEN;
+		$info1=Contacts::getUserInfoByUid(self::$ACCESS_TOKEN,$id1);
+		$info2=Contacts::getUserInfoByUid(self::$ACCESS_TOKEN,$id2);
+
+		$a1=$info1->active;
+		$a2=$info2->active;
+
+		if($a1===false){
+			$delid=$info1->userid;
+		}else if($a2===false){
+			$delid=$info2->userid;
+		}else{
+			//return Contacts::createChat($accesstoken,"manager7108,$id1,$id2","号码去重确认");
+		 	return false;
+		};
+		return Contacts::delUserByIds($accesstoken,$delid);	
 	}
 } 

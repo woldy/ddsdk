@@ -7,12 +7,12 @@ class Message{
      * 根据加密串发送企业消息
      * @Author   Woldy
      * @DateTime 2016-05-12T09:15:19+0800
-     * @param    [type]                   $ACCESS_TOKE [description]
+     * @param    [type]                   $ACCESS_TOKEN [description]
      * @param    [type]                   $config      [description]
      * @param    [type]                   $code        [description]
      * @return   [type]                                [description]
      */
-	public static function sendMessageByCode($ACCESS_TOKE,$config,$code){
+	public static function sendMessageByCode($ACCESS_TOKEN,$config,$code){
 		$join=self::decode($code);
 		$param=json_decode($join,true);
 		if(!isset($config->get('dd')['notice'][$param['user']])){
@@ -24,7 +24,7 @@ class Message{
 			$content=base64_decode($param['content']);
 			$touser=$config->get('dd')['notice'][$param['user']]['touser'];
 			$toparty=$config->get('dd')['notice'][$param['user']]['toparty'];
-			self::sendMessage($touser,$toparty,$content,$AgentID,$ACCESS_TOKE);
+			self::sendMessage($touser,$toparty,$content,$AgentID,$ACCESS_TOKEN);
 		}
  
 	}
@@ -37,11 +37,11 @@ class Message{
      * @param    [type]                   $toparty     [description]
      * @param    [type]                   $content     [description]
      * @param    [type]                   $AgentID     [description]
-     * @param    [type]                   $ACCESS_TOKE [description]
+     * @param    [type]                   $ACCESS_TOKEN [description]
      * @param    string                   $type        [description]
      * @return   [type]                                [description]
      */
-	public static function sendMessage($touser,$toparty,$content,$AgentID,$ACCESS_TOKE,$type='text'){
+	public static function sendMessage($touser,$toparty,$content,$AgentID,$ACCESS_TOKEN,$type='text'){
 		//$content=iconv('GB2312', 'UTF-8', $content);
 		//var_dump($content);
 		//exit;
@@ -56,7 +56,7 @@ class Message{
         	);
         	//var_dump(json_encode($param));
         	//exit;
-            $response = Request::post('https://oapi.dingtalk.com/message/send?access_token='.$ACCESS_TOKE)
+            $response = Request::post('https://oapi.dingtalk.com/message/send?access_token='.$ACCESS_TOKEN)
             	->body(json_encode($param))
             	->sendsJson()
             	->send();

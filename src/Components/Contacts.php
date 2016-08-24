@@ -188,4 +188,55 @@ class contacts{
 
         return $response->body;
     }
+
+
+    public static function sendToConversation($ACCESS_TOKEN){
+        $param=[
+            'sender'=>'manager7108',
+            'cid'=>'chate86e9bfcdfd212c3a1eec38a3cb89b8e',
+            'msgtype'=>'text',
+            'text'=>[
+                'content'=>'test'
+            ]
+        ];
+        $response = Request::post('https://oapi.dingtalk.com/message/send_to_conversation?access_token='.$ACCESS_TOKEN)
+            ->body(json_encode($param))
+            ->sendsJson()
+            ->send();
+        if ($response->hasErrors()){
+            var_dump($response);
+            exit;
+        }
+        if ($response->body->errcode != 0){
+             var_dump($response->body);
+            exit;
+        }
+        return $response->body;        
+    }
+
+
+    public static function createChat($ACCESS_TOKEN,$ids,$title='噗~'){
+        if(!is_array($ids)){
+            $ids=explode(',', $ids);
+        }
+        $param=[
+            "name"=> $title,
+            "owner"=> $ids[0],
+            "useridlist"=>$ids
+        ];
+        $response = Request::post('https://oapi.dingtalk.com/chat/create?access_token='.$ACCESS_TOKEN)
+            ->body(json_encode($param))
+            ->sendsJson()
+            ->send();
+        if ($response->hasErrors()){
+            var_dump($response);
+            exit;
+        }
+        if ($response->body->errcode != 0){
+             var_dump($response->body);
+            exit;
+        }
+        return $response->body;           
+    }
+
 }
