@@ -4,6 +4,7 @@ use Illuminate\Config\Repository;
 use Woldy\ddsdk\Components\Token;
 use Woldy\ddsdk\Components\Message;
 use Woldy\ddsdk\Components\Contacts;
+use Woldy\ddsdk\Components\Group;
 use Illuminate\Support\Facades\Input;
 class dd{
 	static $config;
@@ -127,6 +128,11 @@ class dd{
 	public static function createChat(){
 		$accesstoken=self::$ACCESS_TOKEN;
 		return Contacts::createChat($accesstoken);			
+	}
+
+	public static function getAllGroup(){
+		$accesstoken=self::$ACCESS_TOKEN;
+		return Group::getAll($accesstoken);			
 	}
 
 	/**
