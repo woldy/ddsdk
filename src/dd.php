@@ -29,12 +29,13 @@ class dd{
 	/**
 	 * 获取SSO配置
 	 */
-	public static function getSsoConfig($id){
+	public static function getSsoConfig($ssoid){
 		$ssolist=self::$config->get('dd')['sso'];
-		if(!array_key_exists($id,$ssolist)){
+
+		if(!array_key_exists($ssoid,$ssolist)){
 			die('wrong id!');
 		}else{
-			return $ssolist[$id];
+			return $ssolist[$ssoid];
 		}
 	}
 

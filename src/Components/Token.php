@@ -15,7 +15,7 @@ class Token{
  		$this->CorpID=$config->get('dd')['CorpID'];
  		$this->CorpSecret=$config->get('dd')['CorpSecret'];
  		$this->SSOSecret=$config->get('dd')['SSOSecret'];
-        $this->APPID=$config->get('dd')['APPID'];
+        $this->AppID=$config->get('dd')['APPID'];
         $this->APPSECRET=$config->get('dd')['APPSECRET'];
 	}
 
@@ -59,9 +59,10 @@ class Token{
          * 缓存accessToken。accessToken有效期为两小时，需要在失效前请求新的accessToken（注意：以下代码没有在失效前刷新缓存的accessToken）。
          */
         $accessToken = Cache::get('sns_access_token');
+
         $param=http_build_query(
             array(
-                'appid' =>$this->APPID, 
+                'appid' =>$this->AppID, 
                 'appsecret'=>$this->APPSECRET
             )
         );
@@ -96,12 +97,14 @@ class Token{
                 'tmp_auth_code' =>$code, 
             )
         );
+
+
         if (!$persistent){
             //die('https://oapi.dingtalk.com/gettoken?'.$param);
             $response = Request::post('https://oapi.dingtalk.com/sns/get_persistent_code?access_token='.$accesstoken)
                 ->body($param)
                 ->sendsJson()
-                ->send();;
+                ->send();
             if ($response->hasErrors()){
                 var_dump($response);
                 exit;
@@ -213,6 +216,7 @@ class Token{
 	public function getJsConfig(){
         $corpId =$this->CorpID;
         $agentId = $this->AgentID;
+        $appId = $this->AppID;
         $timeStamp = time();
         $nonceStr = md5($timeStamp.'woldy');
         
@@ -231,6 +235,7 @@ class Token{
             'agentId' => $agentId,
             'timeStamp' => $timeStamp,
             'corpId' => $corpId,
+            'appid'=>$appId,
             'signature' => $signature
         );
         return json_encode($config, JSON_UNESCAPED_SLASHES);
