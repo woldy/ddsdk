@@ -52,10 +52,10 @@ class group{
                 $group['parent_str']=$g['parent']['name'].'-'.$group['parent_str'];
                 array_push($group['parent_ids'],$g['parentid']);
                 $g=$g['parent'];
-            }
+            } 
         }
         $group['parent_str']=$group['parent_str'].'-'.$group['name'];
-        $group['sub_grous']=self::getSubGroups($groupid,$ACCESS_TOKEN,$refresh);
+        $group['sub_groups']=self::getSubGroups($groupid,$ACCESS_TOKEN,$refresh);
         return $group;
     }
 
