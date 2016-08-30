@@ -133,7 +133,12 @@ class dd{
 
 	public static function getAllGroup(){
 		$accesstoken=self::$ACCESS_TOKEN;
-		return Group::getAll($accesstoken);			
+		return Group::getAllGroups($accesstoken);			
+	}
+
+	public static function getGroupById($groupid,$refresh=false){
+		$accesstoken=self::$ACCESS_TOKEN;
+		return Group::getGroupById($groupid,$accesstoken,$refresh);	
 	}
 
 	/**
