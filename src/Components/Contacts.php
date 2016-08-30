@@ -215,12 +215,12 @@ class contacts{
     }
 
 
-    public static function createChat($ACCESS_TOKEN,$ids,$title='噗~'){
+    public static function createChat($ACCESS_TOKEN,$ids,$chat_title='噗~'){
         if(!is_array($ids)){
             $ids=explode(',', $ids);
         }
         $param=[
-            "name"=> $title,
+            "name"=> $chat_title,
             "owner"=> $ids[0],
             "useridlist"=>$ids
         ];

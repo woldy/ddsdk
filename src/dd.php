@@ -126,9 +126,9 @@ class dd{
 		return Contacts::addUser($accesstoken,$user);
 	}
 
-	public static function createChat(){
+	public static function createChat($user_ids,$chat_title){
 		$accesstoken=self::$ACCESS_TOKEN;
-		return Contacts::createChat($accesstoken);			
+		return Contacts::createChat($accesstoken,$user_ids,$chat_title);			
 	}
 
 	public static function getAllGroup(){
