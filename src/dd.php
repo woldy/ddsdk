@@ -131,14 +131,24 @@ class dd{
 		return Contacts::createChat($accesstoken,$user_ids,$chat_title);			
 	}
 
-	public static function getAllGroup(){
+	public static function getAllGroup($refresh=false){
 		$accesstoken=self::$ACCESS_TOKEN;
-		return Group::getAllGroups($accesstoken);			
+		return Group::getAllGroups($accesstoken,$refresh);			
+	}
+
+	public static function getGroupUsers($groupid){
+		$accesstoken=self::$ACCESS_TOKEN;
+		return Group::getGroupUsers($groupid,$accesstoken);			
 	}
 
 	public static function getGroupById($groupid,$refresh=false){
 		$accesstoken=self::$ACCESS_TOKEN;
 		return Group::getGroupById($groupid,$accesstoken,$refresh);	
+	}
+
+	public static function delGroup($groupid){
+		$accesstoken=self::$ACCESS_TOKEN;
+		return Group::delGroup($groupid,$accesstoken);	
 	}
 
 	/**
