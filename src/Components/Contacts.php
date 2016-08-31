@@ -65,6 +65,31 @@ class contacts{
 
 
 
+    public static function getAllUsers($ACCESS_TOKEN,$refresh=false){
+         $allusers=Cache::get('all_users');
+         if(empty($allusers) || $refresh){
+                $allusers=[];
+                $groups=Group::getAllGroups($ACCESS_TOKEN,$refresh); 
+                $percent=0;
+                foreach ($groups as $idx=>$group) {
+                    if(intval($idx*100/count($groups))>$percent){
+                        $percent=intval($idx*100/count($groups));
+                        echo '.';
+                        if($percent % 33==0){
+                            echo "\n";
+                        }
+                    }
+                    
+                    $users=Group::getGroupUsers($group->id,$ACCESS_TOKEN);
+                    foreach ($users as $user) {
+                        array_push($allusers, json_decode(json_encode($user),true));
+                    }
+                }
+                Cache::put('all_users', $allusers,60);  
+         } 
+         return $allusers;
+    }
+
     /**
      * 创建用户
      * @Author   Woldy

@@ -2,6 +2,7 @@
 namespace Woldy\ddsdk\Components;
 use Cache;
 use Httpful\Request;
+use Woldy\ddsdk\Components\Group;
 class group{
     /**
      * 获取所有部门
@@ -12,7 +13,7 @@ class group{
      * @return   [type]                                 [description]
      */
 	public static function getAllGroups($ACCESS_TOKEN,$refresh=false){
-            $allgroup=Cache::get('all_group');
+            $allgroups=Cache::get('all_groups');
             if(empty($allgroup) || $refresh){
                 $param=http_build_query(
                     array(
@@ -30,9 +31,9 @@ class group{
                     exit;
                 }
                 $result = $response->body->department;  
-                Cache::put('all_group', $result,60);              
+                Cache::put('all_groups', $result,60);              
             }else{
-                $result=$allgroup;
+                $result=$allgroups;
             }
             return  $result;
 	}
@@ -47,33 +48,34 @@ class group{
      * @return   [type]                                 [description]
      */
     public static function getGroupById($groupid,$ACCESS_TOKEN,$refresh=false){
-        $groups=self::getAllGroups($ACCESS_TOKEN,$refresh);
-
-        // var_dump($groups);
-        // exit;
-        $groups=json_decode(json_encode($groups),TRUE);
-        $groupinfo='';
-        foreach ($groups as $group) {
-            if($group['id']==$groupid){
-                $groupinfo=$group;
-                break;
+        $group=Cache::get('group_'.$groupid);
+        if(empty($group) || $refresh){
+            $groups=self::getAllGroups($ACCESS_TOKEN,$refresh);
+            $groups=json_decode(json_encode($groups),TRUE);
+            $groupinfo='';
+            foreach ($groups as $group) {
+                if($group['id']==$groupid){
+                    $groupinfo=$group;
+                    break;
+                }
             }
-        }
 
-        $group['fullname']='';
-        $group['parent_ids']=[];
-        if(isset($group['parentid'])){
-            $group['parent']=self::getGroupById($group['parentid'],$ACCESS_TOKEN,$refresh);
-            $g= $group;
-            while (isset($g['parent'])) {
-                $group['fullname']=$g['parent']['name'].'-'.$group['fullname'];
-                array_push($group['parent_ids'],$g['parentid']);
-                $g=$g['parent'];
-            } 
+            $group['fullname']='';
+            $group['parent_ids']=[];
+            if(isset($group['parentid'])){
+                $group['parent']=self::getGroupById($group['parentid'],$ACCESS_TOKEN,$refresh);
+                $g= $group;
+                while (isset($g['parent'])) {
+                    $group['fullname']=$g['parent']['name'].'-'.$group['fullname'];
+                    array_push($group['parent_ids'],$g['parentid']);
+                    $g=$g['parent'];
+                } 
+            }
+            $group['fullname']=$group['fullname'].'-'.$group['name'];
+            $group['fullname']=str_replace('--', '-', $group['fullname']);
+            $group['sub_groups']=self::getSubGroups($groupid,$ACCESS_TOKEN,$refresh);
+            Cache::put('group_'.$groupid, $group,5);  
         }
-        $group['fullname']=$group['fullname'].'-'.$group['name'];
-        $group['fullname']=str_replace('--', '-', $group['fullname']);
-        $group['sub_groups']=self::getSubGroups($groupid,$ACCESS_TOKEN,$refresh);
         return $group;
     }
 

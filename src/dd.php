@@ -131,9 +131,14 @@ class dd{
 		return Contacts::createChat($accesstoken,$user_ids,$chat_title);			
 	}
 
-	public static function getAllGroup($refresh=false){
+	public static function getAllGroups($refresh=false){
 		$accesstoken=self::$ACCESS_TOKEN;
 		return Group::getAllGroups($accesstoken,$refresh);			
+	}
+
+	public static function getAllUsers($refresh=false){
+		$accesstoken=self::$ACCESS_TOKEN;
+		return Contacts::getAllUsers($accesstoken,$refresh);			
 	}
 
 	public static function getGroupUsers($groupid){
