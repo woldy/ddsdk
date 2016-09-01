@@ -85,7 +85,7 @@ class contacts{
                         array_push($allusers, json_decode(json_encode($user),true));
                     }
                 }
-                Cache::put('all_users', $allusers,60);  
+                Cache::put('all_users', $allusers,1160);  
          } 
          return $allusers;
     }
