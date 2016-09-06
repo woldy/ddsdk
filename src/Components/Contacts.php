@@ -80,7 +80,7 @@ class contacts{
                         }
                     }
                     
-                    $users=Group::getGroupUsers($group->id,$ACCESS_TOKEN);
+                    $users=Group::getGroupUsers($group->id,$ACCESS_TOKEN,$refresh);
                     foreach ($users as $user) {
                         array_push($allusers, json_decode(json_encode($user),true));
                     }
@@ -121,11 +121,11 @@ class contacts{
             ->sendsJson()
             ->send();
         if ($response->hasErrors()){
-            var_dump($response);
-            exit;
+            // var_dump($response);
+            // exit;
         }
         if ($response->body->errcode != 0){
-            //  var_dump($response->body);
+            // var_dump($response->body);
             // exit;
         }
         return $response->body;

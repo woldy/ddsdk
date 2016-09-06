@@ -45,9 +45,8 @@ class dd{
 	 * @DateTime 2016-05-09T17:03:07+0800
 	 * @return   [type]                   [description]
 	 */
-	public static function getUserInfoByCode(){
-		$code=Input::get('authcode');
-		return Contacts::getUserInfoByCode(self::$ACCESS_TOKEN,$code);
+	public static function getUserInfoByCode($authcode){
+		return Contacts::getUserInfoByCode(self::$ACCESS_TOKEN,$authcode);
 	}
 
 	/**
@@ -154,6 +153,18 @@ class dd{
 	public static function delGroup($groupid){
 		$accesstoken=self::$ACCESS_TOKEN;
 		return Group::delGroup($groupid,$accesstoken);	
+	}
+
+
+	public static function getGroupByName($groupName,$refresh=false){
+		$accesstoken=self::$ACCESS_TOKEN;
+		return Group::getGroupByName($groupName,$accesstoken,1,$refresh);			
+	}	
+
+
+	public static function createGroup($name,$parentid,$ACCESS_TOKEN){
+		$ACCESS_TOKEN=self::$ACCESS_TOKEN;
+		return Group::createGroup($name,$parentid,$ACCESS_TOKEN);
 	}
 
 	/**
