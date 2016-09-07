@@ -150,9 +150,9 @@ class dd{
 		return Group::getGroupUsers($groupid,$accesstoken);			
 	}
 
-	public static function getGroupById($groupid,$refresh=false){
+	public static function getGroupById($groupid,$sub=true,$refresh=false){
 		$accesstoken=self::$ACCESS_TOKEN;
-		return Group::getGroupById($groupid,$accesstoken,$refresh);	
+		return Group::getGroupById($groupid,$accesstoken,$sub,$refresh);	
 	}
 
 	public static function delGroup($groupid){

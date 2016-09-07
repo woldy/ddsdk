@@ -32,7 +32,7 @@ class group{
                     exit;
                 }
                 $result = $response->body->department;  
-                Cache::put('all_groups', $result,120);              
+                Cache::put('all_groups', $result,200);              
             }else{
                 $result=$allgroups;
             }
@@ -123,7 +123,7 @@ class group{
      * @param    boolean                  $refresh      [description]
      * @return   [type]                                 [description]
      */
-    public static function getGroupById($groupid,$ACCESS_TOKEN,$refresh=false){
+    public static function getGroupById($groupid,$ACCESS_TOKEN,$sub=true,$refresh=false){
         $group=Cache::get('group_'.$groupid);
         if(empty($group) || $refresh){
             $groups=self::getAllGroups($ACCESS_TOKEN,$refresh);
@@ -149,8 +149,10 @@ class group{
             }
             $group['fullname']=$group['fullname'].'-'.$group['name'];
             $group['fullname']=str_replace('--', '-', $group['fullname']);
-            $group['sub_groups']=self::getSubGroups($groupid,$ACCESS_TOKEN,$refresh);
-            Cache::put('group_'.$groupid, $group,60);  
+            if($sub){
+                $group['sub_groups']=self::getSubGroups($groupid,$ACCESS_TOKEN,$refresh);
+            }
+            Cache::put('group_'.$groupid, $group,300);  
         }
         return $group;
     }
