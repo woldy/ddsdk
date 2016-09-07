@@ -125,6 +125,11 @@ class dd{
 		return Contacts::addUser($accesstoken,$user);
 	}
 
+	public static function updateUser($user){
+		$accesstoken=self::$ACCESS_TOKEN;
+		return Contacts::updateUser($accesstoken,$user);
+	}
+
 	public static function createChat($user_ids,$chat_title){
 		$accesstoken=self::$ACCESS_TOKEN;
 		return Contacts::createChat($accesstoken,$user_ids,$chat_title);			

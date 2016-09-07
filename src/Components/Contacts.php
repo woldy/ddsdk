@@ -86,7 +86,7 @@ class contacts{
                     }
                 }
                 Cache::put('all_users', $allusers,1160);  
-         } 
+         }
          return $allusers;
     }
 
@@ -117,6 +117,23 @@ class contacts{
      */
     public static function addUser($ACCESS_TOKEN,$user){
         $response = Request::post('https://oapi.dingtalk.com/user/create?access_token='.$ACCESS_TOKEN)
+            ->body(json_encode($user))
+            ->sendsJson()
+            ->send();
+        if ($response->hasErrors()){
+            // var_dump($response);
+            // exit;
+        }
+        if ($response->body->errcode != 0){
+            // var_dump($response->body);
+            // exit;
+        }
+        return $response->body;
+    }
+
+
+    public static function updateUser($ACCESS_TOKEN,$user){
+        $response = Request::post('https://oapi.dingtalk.com/user/update?access_token='.$ACCESS_TOKEN)
             ->body(json_encode($user))
             ->sendsJson()
             ->send();

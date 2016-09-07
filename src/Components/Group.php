@@ -32,7 +32,7 @@ class group{
                     exit;
                 }
                 $result = $response->body->department;  
-                Cache::put('all_groups', $result,60);              
+                Cache::put('all_groups', $result,120);              
             }else{
                 $result=$allgroups;
             }
@@ -199,7 +199,7 @@ class group{
                 exit;
             }
             $groupusers = $response->body->userlist;
-            Cache::put('group_users_'.$groupid,$groupusers,5);  
+            Cache::put('group_users_'.$groupid,$groupusers,30);  
         }            
         return  $groupusers;
     }
