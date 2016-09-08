@@ -49,19 +49,24 @@ class group{
      * @return   [type]                                 [description]
      */
     public static function getGroupByName($namepart,$ACCESS_TOKEN,$parentid=1,$refresh=false){
-            $groups=self::getAllGroups($ACCESS_TOKEN,$refresh);
-            if($refresh){
-                //var_dump($group);
-                //exit;
-            }
+
             if(!is_array($namepart)){
                 $namepart=explode('-',$namepart);
             }
-            foreach ($groups as $group) {
-               if($group->name==$namepart[0]  && ($group->parentid[0]==$parentid || $group->parentid==$parentid)){
+
+            $group=Cache::get('group_name_'.implode('-', $namepart));
+            if(empty($group) || $refresh){
+                $groups=self::getAllGroups($ACCESS_TOKEN,$refresh);
+                if($refresh){
+                //var_dump($group);
+                //exit;
+                }
+                foreach ($groups as $group) {
+                if($group->name==$namepart[0]  && ($group->parentid[0]==$parentid || $group->parentid==$parentid)){
                     array_shift($namepart);
                     if(count($namepart)==0){
                         //return self::getGroupById($group->id,$ACCESS_TOKEN);
+                        Cache::put('group_name_'.implode('-', $namepart), $group,200); 
                         return $group;
                     }else{
                         return self:: getGroupByName($namepart,$ACCESS_TOKEN,$group->id,$refresh);
@@ -69,6 +74,10 @@ class group{
                     break;
                }
             }
+           }else{
+            return $group;
+           }
+       
 
             // var_dump($namepart);
             // var_dump($parentid);
