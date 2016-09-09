@@ -148,7 +148,7 @@ class group{
             $group['fullname']='';
             $group['parent_ids']=[];
             if(isset($group['parentid'])){
-                $group['parent']=self::getGroupById($group['parentid'],$ACCESS_TOKEN,$refresh);
+                $group['parent']=self::getGroupById($group['parentid'],$ACCESS_TOKEN,$sub=true,$refresh);
                 $g= $group;
                 while (isset($g['parent'])) {
                     $group['fullname']=$g['parent']['name'].'-'.$group['fullname'];
