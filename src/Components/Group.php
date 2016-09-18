@@ -54,8 +54,12 @@ class group{
                 $namepart=explode('-',$namepart);
             }
 
-            $group=Cache::get('group_name_'.implode('-', $namepart));
+
+
+            $group=Cache::get('group_name_北京学而思教育科技有限公司-'.implode('-', $namepart));
+            
             if(empty($group) || $refresh){
+                //echo "\n".implode('-', $namepart)."\n";
                 $groups=self::getAllGroups($ACCESS_TOKEN,$refresh);
                 if($refresh){
                 //var_dump($group);
@@ -65,8 +69,8 @@ class group{
                 if($group->name==$namepart[0]  && ($group->parentid[0]==$parentid || $group->parentid==$parentid)){
                     array_shift($namepart);
                     if(count($namepart)==0){
-                        //return self::getGroupById($group->id,$ACCESS_TOKEN);
-                        Cache::put('group_name_'.implode('-', $namepart), $group,200); 
+                        $fullname=self::getGroupById($group->id,$ACCESS_TOKEN,false,$refresh)['fullname'];
+                        Cache::put('group_name_'.$fullname, $group,200); 
                         return $group;
                     }else{
                         return self:: getGroupByName($namepart,$ACCESS_TOKEN,$group->id,$refresh);
