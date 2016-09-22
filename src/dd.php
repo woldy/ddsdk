@@ -78,8 +78,10 @@ class dd{
 	 * @param    [type]                   $code [description]
 	 * @return   [type]                         [description]
 	 */
-	public static function sendMessageByCode(){
-		$code=Input::get('code');
+	public static function sendMessageByCode($code=''){
+		if(empty($code)){
+			$code=Input::get('code');
+		}
 		//echo $code;
 		return Message::sendMessageByCode(self::$ACCESS_TOKEN,self::$config,$code);
 	}

@@ -15,6 +15,7 @@ class Message{
      */
 	public static function sendMessageByCode($ACCESS_TOKEN,$config,$code){
 		$join=self::decode($code);
+
 		$param=json_decode($join,true);
 		if(!isset($config->get('dd')['notice'][$param['user']])){
 			die('api用户不存在！');
@@ -23,7 +24,6 @@ class Message{
 		}else{
 			$AgentID=$config->get('dd')['AgentID'];
 			$content=base64_decode($param['content']);
-
             $touser=$config->get('dd')['notice'][$param['user']]['touser'];
 
             if(isset($param['emails']) && !empty($param['emails'])){
@@ -34,7 +34,7 @@ class Message{
                 }
                 $touser=implode('|',$touser);
             }
-            			
+            			                  
 			$toparty=$config->get('dd')['notice'][$param['user']]['toparty'];
 			self::sendMessage($touser,$toparty,$content,$AgentID,$ACCESS_TOKEN);
 		}
@@ -71,12 +71,13 @@ class Message{
      */
 	public static function sendMessage($touser,$toparty,$content,$AgentID,$ACCESS_TOKEN,$type='text'){
 		//$content=iconv('GB2312', 'UTF-8', $content);
-		//var_dump($content);
-		//exit;
+
         //
-        var_dump($touser);
+      
 		if($type=='text'){
-			$content=iconv('GB2312', 'UTF-8', $content);
+            if(mb_detect_encoding( $content,'UTF-8') !='UTF-8'){
+                $content=iconv('GB2312', 'UTF-8', $content);
+            }
         	$param=array(
         		'touser' =>$touser, 
         		'toparty'=>$toparty,
