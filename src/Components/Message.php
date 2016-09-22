@@ -1,6 +1,7 @@
 <?php
 namespace Woldy\ddsdk\Components;
-use Cache;
+use Cache;  
+use Storage;
 use Httpful\Request;
 class Message{
     /**
@@ -22,12 +23,39 @@ class Message{
 		}else{
 			$AgentID=$config->get('dd')['AgentID'];
 			$content=base64_decode($param['content']);
-			$touser=$config->get('dd')['notice'][$param['user']]['touser'];
+
+            $touser=$config->get('dd')['notice'][$param['user']]['touser'];
+
+            if(isset($param['emails']) && !empty($param['emails'])){
+                $touser=[];
+                $emails=explode(',', $param['emails']);
+                foreach ($emails as $email) {
+                    array_push($touser, self::getUser($email));
+                }
+                $touser=implode('|',$touser);
+            }
+            			
 			$toparty=$config->get('dd')['notice'][$param['user']]['toparty'];
 			self::sendMessage($touser,$toparty,$content,$AgentID,$ACCESS_TOKEN);
 		}
  
 	}
+
+    public static function getUser($email){
+           $result['list']=[];
+            $all=(Storage::disk('local')->get("/ding/all.csv"));
+            $list=explode("\n",$all);
+            $count=0;
+            foreach ($list as $item) {
+                $item=trim($item);
+                $info=explode(',',$item);
+                if(isset($info[5]) && strrpos($info[5], '@')!==false){ //email
+                    if($info[5]==$email){
+                        return $info[0];
+                    }
+                }
+            }
+    }
 
     /**
      * 根据详细参数发送企业消息
@@ -45,6 +73,8 @@ class Message{
 		//$content=iconv('GB2312', 'UTF-8', $content);
 		//var_dump($content);
 		//exit;
+        //
+        var_dump($touser);
 		if($type=='text'){
 			$content=iconv('GB2312', 'UTF-8', $content);
         	$param=array(

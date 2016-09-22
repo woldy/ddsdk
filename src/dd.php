@@ -67,8 +67,8 @@ class dd{
 	 * @param    [type]                   $content [description]
 	 * @return   [type]                            [description]
 	 */
-	public static function sendMessage($touser,$toparty,$type='text',$content){
-
+	public static function sendMessage($touser,$toparty,$content,$type='text'){
+		return Message::sendMessage($touser,$toparty,$content,self::$config,self::$ACCESS_TOKEN,$type='text');
 	}
 
 	/**
