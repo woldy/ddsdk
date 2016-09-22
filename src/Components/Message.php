@@ -5,7 +5,7 @@ use Storage;
 use Httpful\Request;
 class Message{
     /**
-     * 根据加密串发送企业消息
+     * 根据加密串发送企业消息。
      * @Author   Woldy
      * @DateTime 2016-05-12T09:15:19+0800
      * @param    [type]                   $ACCESS_TOKEN [description]
