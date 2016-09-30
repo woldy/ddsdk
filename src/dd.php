@@ -157,6 +157,16 @@ class dd{
 		return Group::getGroupById($groupid,$accesstoken,$sub,$refresh);	
 	}
 
+	public static function getSubGroups($groupid,$deep,$refresh=false){
+		$accesstoken=self::$ACCESS_TOKEN;
+		return Group::getSubGroups($groupid,$accesstoken,$deep,$refresh);	
+	}
+
+	public static function updateGroup($group){
+		$accesstoken=self::$ACCESS_TOKEN;
+		return Group::updateGroup($group,$accesstoken);	
+	}
+
 	public static function delGroup($groupid){
 		$accesstoken=self::$ACCESS_TOKEN;
 		return Group::delGroup($groupid,$accesstoken);	

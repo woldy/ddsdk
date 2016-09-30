@@ -49,7 +49,6 @@ class group{
      * @return   [type]                                 [description]
      */
     public static function getGroupByName($namepart,$ACCESS_TOKEN,$parentid=1,$refresh=false){
-
             if(!is_array($namepart)){
                 $namepart=explode('-',$namepart);
             }
@@ -66,20 +65,30 @@ class group{
                 //exit;
                 }
                 foreach ($groups as $group) {
-                if($group->name==$namepart[0]  && ($group->parentid[0]==$parentid || $group->parentid==$parentid)){
-                    array_shift($namepart);
-                    if(count($namepart)==0){
-                        $fullname=self::getGroupById($group->id,$ACCESS_TOKEN,false,$refresh)['fullname'];
-                        Cache::put('group_name_'.$fullname, $group,200); 
-                        return $group;
+
+                    if(isset($group->parentid[0])){
+                        $pid=$group->parentid[0];
+                    }else if(isset($group->parentid)){
+                        $pid=$group->parentid;
                     }else{
-                        return self:: getGroupByName($namepart,$ACCESS_TOKEN,$group->id,$refresh);
+                        $pid=0;
                     }
-                    break;
-               }
-            }
+ 
+
+                    if($group->name==$namepart[0]  && $pid==$parentid){
+                        array_shift($namepart);
+                        if(count($namepart)==0){
+                            $fullname=self::getGroupById($group->id,$ACCESS_TOKEN,false,$refresh)['fullname'];
+                            Cache::put('group_name_'.$fullname, $group,200); 
+                            return $group;
+                        }else{
+                            return self:: getGroupByName($namepart,$ACCESS_TOKEN,$group->id,$refresh);
+                        }
+                        break;
+                    }
+                }
            }else{
-            return $group;
+                return $group;
            }
        
 
@@ -91,14 +100,14 @@ class group{
                 Log::info("ding|group_add|".self::getGroupById($parentid,$ACCESS_TOKEN)['fullname'].'-'.$namepart[0]);
                 return self::getGroupByName($namepart,$ACCESS_TOKEN,$parentid,true);
             }else{
-                echo 'can\'t  found department: ';
+                echo 'can\'t  add department: ';
                 //var_dump($parentid);
                 var_dump(self::getGroupById($parentid,$ACCESS_TOKEN)['fullname']);
                 var_dump($namepart);       
                 var_dump($add);        
             }
 
-            exit;
+     
             
     }
 
@@ -152,7 +161,7 @@ class group{
             $group['fullname']='';
             $group['parent_ids']=[];
             if(isset($group['parentid'])){
-                $group['parent']=self::getGroupById($group['parentid'],$ACCESS_TOKEN,$sub=true,$refresh);
+                $group['parent']=self::getGroupById($group['parentid'],$ACCESS_TOKEN,$sub,$refresh);
                 $g= $group;
                 while (isset($g['parent'])) {
                     $group['fullname']=$g['parent']['name'].'-'.$group['fullname'];
@@ -163,7 +172,7 @@ class group{
             $group['fullname']=$group['fullname'].'-'.$group['name'];
             $group['fullname']=str_replace('--', '-', $group['fullname']);
             if($sub){
-                $group['sub_groups']=self::getSubGroups($groupid,$ACCESS_TOKEN,$refresh);
+                $group['sub_groups']=self::getSubGroups($groupid,$ACCESS_TOKEN,1,$refresh);
             }
             Cache::put('group_'.$groupid, $group,300);  
         }
@@ -180,16 +189,24 @@ class group{
      * @param    boolean                  $refresh      [description]
      * @return   [type]                                 [description]
      */
-    public static function getSubGroups($groupid,$ACCESS_TOKEN,$refresh=false){
+    public static function getSubGroups($groupid,$ACCESS_TOKEN,$deep=1,$refresh=false){
         $groups=self::getAllGroups($ACCESS_TOKEN,$refresh);
         $groups=json_decode(json_encode($groups),TRUE);
         $subgroups=[];
+        $deep=$deep-1;
         foreach ($groups as $group) {
             if(!isset($group['parentid'])) $group['parentid']=0;
             if($group['parentid']==$groupid){
+                $group['top']=$deep;
                 array_push($subgroups,$group);
+                if($deep>0){
+                    $subagain=self::getSubGroups($group['id'],$ACCESS_TOKEN,$deep,$refresh);
+                    $subgroups=array_merge($subgroups,$subagain);
+                }
+
             }
         }
+
         return $subgroups;
     }
     
@@ -237,6 +254,30 @@ class group{
             }
             $result = $response->body;            
             return  $result;
+    }
+
+    /**
+     * 更新部门
+     * @Author   woldy
+     * @DateTime 2016-09-29T22:51:00+0800
+     * @param    [type]                   $group        [description]
+     * @param    [type]                   $ACCESS_TOKEN [description]
+     * @return   [type]                                 [description]
+     */
+    public static function updateGroup($group,$ACCESS_TOKEN){
+            $response = Request::post('https://oapi.dingtalk.com/department/update?access_token='.$ACCESS_TOKEN)
+                ->body(json_encode($group))
+                ->sendsJson()
+                ->send();
+            if ($response->hasErrors()){
+                var_dump($response);
+                exit;
+            }
+            if ($response->body->errcode != 0){
+                var_dump($response->body);
+                exit;
+            }
+            return $response->body;
     }
  
 }
