@@ -142,6 +142,11 @@ class dd{
 		return Group::getAllGroups($accesstoken,$refresh);			
 	}
 
+	public static function getFullGroups($refresh=false){
+		$accesstoken=self::$ACCESS_TOKEN;
+		return Group::getFullGroups($accesstoken,$refresh);			
+	}
+
 	public static function getAllUsers($refresh=false){
 		$accesstoken=self::$ACCESS_TOKEN;
 		return Contacts::getAllUsers($accesstoken,$refresh);			
