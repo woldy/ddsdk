@@ -14,7 +14,7 @@ class group{
      * @return   [type]                                 [description]
      */
 	public static function getAllGroups($ACCESS_TOKEN,$refresh=false){
-            $allgroups=Cache::get('all_groups');
+            $groups=Cache::get('all_groups');
             if(empty($allgroup) || $refresh){
                 $param=http_build_query(
                     array(
@@ -32,60 +32,42 @@ class group{
                     exit;
                 }
                 $allgroups = $response->body->department;  
-                Cache::put('groups', $allgroups,200);  
-                            
-            }else{
-                $result=$allgroups;
-            }
-
-            $groups=[];
-            foreach ($allgroups as $group) {
-                $groups[$group->id]=json_decode(json_encode($group),true);
-                $groups[$group->id]['tmpid']=$group->id;
-                $groups[$group->id]['parent_ids']=[];
-                $groups[$group->id]['name_part']=[];
-                $groups[$group->id]['fullname']='';
-            }
+                $groups=[];
+                foreach ($allgroups as $group) {
+                    $groups[$group->id]=json_decode(json_encode($group),true);
+                    $groups[$group->id]['tmpid']=$group->id;
+                    $groups[$group->id]['parent_ids']=[];
+                    $groups[$group->id]['name_part']=[];
+                    $groups[$group->id]['fullname']='';
+                }
 
 
-            $cover_all=false;
-            while(!$cover_all){
-                $cover_all=true;
-                foreach ($groups as $key => $value) {
-                    if($groups[$key]['tmpid']>1){
-                        $cover_all=false;
-                        array_unshift($groups[$key]['parent_ids'], $groups[$key]['tmpid']);
-                        array_unshift($groups[$key]['name_part'], $groups[$groups[$key]['tmpid']]['name']);
-                        $groups[$key]['tmpid']=$groups[$groups[$key]['tmpid']]['parentid'];
-                    }else if($groups[$key]['tmpid']==1){
-                        array_unshift($groups[$key]['parent_ids'], 1);
-                        array_unshift($groups[$key]['name_part'], $groups[1]['name']);
-                        $groups[$key]['fullname']=implode('-',$groups[$key]['name_part']);
-                        $groups[$key]['tmpid']=0;
+                $cover_all=false;
+                while(!$cover_all){
+                    $cover_all=true;
+                    foreach ($groups as $key => $value) {
+                        if($groups[$key]['tmpid']>1){
+                            $cover_all=false;
+                            array_unshift($groups[$key]['parent_ids'], $groups[$key]['tmpid']);
+                            array_unshift($groups[$key]['name_part'], $groups[$groups[$key]['tmpid']]['name']);
+                            $groups[$key]['tmpid']=$groups[$groups[$key]['tmpid']]['parentid'];
+                        }else if($groups[$key]['tmpid']==1){
+                            array_unshift($groups[$key]['parent_ids'], 1);
+                            array_unshift($groups[$key]['name_part'], $groups[1]['name']);
+                            $groups[$key]['fullname']=implode('-',$groups[$key]['name_part']);
+                            $groups[$key]['tmpid']=0;
+                        }
                     }
                 }
+
+                Cache::put('groups', $groups,200);  
+                            
             }
-            var_dump($groups);
-            exit;
-            return  $result;
+
+            return  $groups;
 	}
 
 
-    public static function getFullGroups($ACCESS_TOKEN,$refresh=false){
-            $groups=self::getAllGroups($ACCESS_TOKEN,$refresh);
-            if(true){
-                $i=0;
-                foreach ($groups as $group) {
-                    $group=self::getGroupById($group->id,$ACCESS_TOKEN,false);
-                    $i++;
-                    echo "$i\n";
-                }
-                            
-            }else{
-                $result=$groups;
-            }
-            return  $result;
-    }
 
 
     /**
@@ -97,49 +79,26 @@ class group{
      * @param    boolean                  $refresh      [description]
      * @return   [type]                                 [description]
      */
-    public static function getGroupByName($namepart,$ACCESS_TOKEN,$parentid=1,$refresh=false){
-            if(!is_array($namepart)){
-                $namepart=explode('-',$namepart);
-            }
-
-
-
-            $group=Cache::get('group_name_北京学而思教育科技有限公司-'.implode('-', $namepart));
+    public static function getGroupByName($name,$ACCESS_TOKEN,$refresh=false){
+            $group=Cache::get('group_name_'.$name);
             
             if(empty($group) || $refresh){
-                //echo "\n".implode('-', $namepart)."\n";
                 $groups=self::getAllGroups($ACCESS_TOKEN,$refresh);
-                if($refresh){
-                //var_dump($group);
-                //exit;
-                }
                 foreach ($groups as $group) {
-
-                    if(isset($group->parentid[0])){
-                        $pid=$group->parentid[0];
-                    }else if(isset($group->parentid)){
-                        $pid=$group->parentid;
-                    }else{
-                        $pid=0;
-                    }
- 
-
-                    if($group->name==$namepart[0]  && $pid==$parentid){
-                        array_shift($namepart);
-                        if(count($namepart)==0){
-                            $fullname=self::getGroupById($group->id,$ACCESS_TOKEN,false,$refresh)['fullname'];
-                            Cache::put('group_name_'.$fullname, $group,200); 
-                            return $group;
-                        }else{
-                            return self:: getGroupByName($namepart,$ACCESS_TOKEN,$group->id,$refresh);
-                        }
-                        break;
+                    if($group['fullname']==$name){
+                        return $name;
                     }
                 }
            }else{
                 return $group;
            }
        
+
+            while (count($namepart)>0) {
+                # code...
+            }
+            $namepart=explode('-',$name);
+            $namepart=
 
             // var_dump($namepart);
             // var_dump($parentid);
@@ -202,24 +161,10 @@ class group{
             $groupinfo='';
             foreach ($groups as $group) {
                 if($group['id']==$groupid){
-                    $groupinfo=$group;
                     break;
                 }
             }
 
-            $group['fullname']='';
-            $group['parent_ids']=[];
-            if(isset($group['parentid'])){
-                $group['parent']=self::getGroupById($group['parentid'],$ACCESS_TOKEN,$sub,$refresh);
-                $g= $group;
-                while (isset($g['parent'])) {
-                    $group['fullname']=$g['parent']['name'].'-'.$group['fullname'];
-                    array_push($group['parent_ids'],$g['parentid']);
-                    $g=$g['parent'];
-                } 
-            }
-            $group['fullname']=$group['fullname'].'-'.$group['name'];
-            $group['fullname']=str_replace('--', '-', $group['fullname']);
             if($sub){
                 $group['sub_groups']=self::getSubGroups($groupid,$ACCESS_TOKEN,1,$refresh);
             }
@@ -240,9 +185,6 @@ class group{
      */
     public static function getSubGroups($groupid,$ACCESS_TOKEN,$deep=1,$refresh=false){
         $groups=self::getAllGroups($ACCESS_TOKEN,$refresh);
-        $groups=json_decode(json_encode($groups),TRUE);
-        $subgroups=[];
-        $deep=$deep-1;
         foreach ($groups as $group) {
             if(!isset($group['parentid'])) $group['parentid']=0;
             if($group['parentid']==$groupid){
