@@ -147,9 +147,9 @@ class dd{
 		return Group::getFullGroups($accesstoken,$refresh);			
 	}
 
-	public static function getAllUsers($refresh=false){
+	public static function getAllUsers($refresh=false,$extPart=''){
 		$accesstoken=self::$ACCESS_TOKEN;
-		return Contacts::getAllUsers($accesstoken,$refresh);			
+		return Contacts::getAllUsers($accesstoken,$refresh,$extPart);			
 	}
 
 	public static function getGroupUsers($groupid){

@@ -65,7 +65,7 @@ class contacts{
 
 
 
-    public static function getAllUsers($ACCESS_TOKEN,$refresh=false){
+    public static function getAllUsers($ACCESS_TOKEN,$refresh=false,$extPart=''){
          $allusers=Cache::get('all_users');
          if(empty($allusers) || $refresh){
                 $allusers=[];
@@ -79,8 +79,12 @@ class contacts{
                             echo "\n";
                         }
                     }
-                    
-                    $users=Group::getGroupUsers($group->id,$ACCESS_TOKEN,$refresh);
+                    if(!empty($extPart)){
+                        if(strrpos($group['fullname'], $extPart)){
+                            continue;
+                        }
+                    }
+                    $users=Group::getGroupUsers($group['id'],$ACCESS_TOKEN,$refresh);
                     foreach ($users as $user) {
                         array_push($allusers, json_decode(json_encode($user),true));
                     }

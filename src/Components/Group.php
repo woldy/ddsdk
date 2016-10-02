@@ -14,8 +14,8 @@ class group{
      * @return   [type]                                 [description]
      */
 	public static function getAllGroups($ACCESS_TOKEN,$refresh=false){
-            $groups=Cache::get('all_groups');
-            if(empty($allgroup) || $refresh){
+            $allgroups=Cache::get('all_groups');
+            if(empty($allgroups) || $refresh){
                 $param=http_build_query(
                     array(
                         'access_token'=>$ACCESS_TOKEN
@@ -59,12 +59,12 @@ class group{
                         }
                     }
                 }
-
-                Cache::put('groups', $groups,200);  
+                $allgroups=$groups;
+                Cache::put('all_groups', $groups,200);  
                             
             }
+            return  $allgroups;
 
-            return  $groups;
 	}
 
 
@@ -89,34 +89,37 @@ class group{
                         return $name;
                     }
                 }
-           }else{
-                return $group;
-           }
-       
-
-            while (count($namepart)>0) {
-                # code...
-            }
-            $namepart=explode('-',$name);
-            $namepart=
-
-            // var_dump($namepart);
-            // var_dump($parentid);
-            $add=self::createGroup($namepart[0],$parentid,$ACCESS_TOKEN);
-            if($add->errcode==0){
-                echo 'add group: '.self::getGroupById($parentid,$ACCESS_TOKEN)['fullname'].'-'.$namepart[0]."\n";
-                Log::info("ding|group_add|".self::getGroupById($parentid,$ACCESS_TOKEN)['fullname'].'-'.$namepart[0]);
-                return self::getGroupByName($namepart,$ACCESS_TOKEN,$parentid,true);
             }else{
-                echo 'can\'t  add department: ';
-                //var_dump($parentid);
-                var_dump(self::getGroupById($parentid,$ACCESS_TOKEN)['fullname']);
-                var_dump($namepart);       
-                var_dump($add);        
+                return $group;
             }
+       
+            $name_part=explode('-',$name);
+            $add_group=[];
+            while (count($name_part)>0) {
+                array_unshift($add_group,array_pop($name_part));
+                foreach ($groups as $group) {
+                    if($group['fullname']==implode('-',$name_part)){
+                        $pgroup=json_decode(json_encode(['id'=>$group['id']]));
+                        foreach ($add_group as $add_name) {
+                            $pgroup=self::createGroup($add_name,$pgroup->id,$ACCESS_TOKEN);
+                                if($pgroup->errcode==0){
+                                echo 'add group: '.$group['fullname'].'-'. $add_name."\n";
+                                Log::info("ding|group_add|".$group['fullname'].'-'. $add_name);
+                            }else{
+                                echo 'can\'t  add department: ';
+                                var_dump(self::getGroupById($parentid,$ACCESS_TOKEN)['fullname']);
+                                var_dump($namepart);       
+                                var_dump($add);        
+                            }
+                        }
+                        return $pgroup;
+                        //return self::getGroupById($pgroup->id,$ACCESS_TOKEN,false,true);
+                    }
 
-     
-            
+                }
+            }
+    
+            return [];
     }
 
  
@@ -154,20 +157,15 @@ class group{
      * @return   [type]                                 [description]
      */
     public static function getGroupById($groupid,$ACCESS_TOKEN,$sub=true,$refresh=false){
-        $group=Cache::get('group_'.$groupid);
+        $subflag=$sub?'sub_':'nosub_';
+        $group=Cache::get('group_'.$subflag.$groupid);
         if(empty($group) || $refresh){
             $groups=self::getAllGroups($ACCESS_TOKEN,$refresh);
-            $groups=json_decode(json_encode($groups),TRUE);
-            $groupinfo='';
-            foreach ($groups as $group) {
-                if($group['id']==$groupid){
-                    break;
-                }
-            }
-
+            $group=$groups[$groupid];
             if($sub){
                 $group['sub_groups']=self::getSubGroups($groupid,$ACCESS_TOKEN,1,$refresh);
             }
+
             Cache::put('group_'.$groupid, $group,300);  
         }
         return $group;
@@ -185,19 +183,19 @@ class group{
      */
     public static function getSubGroups($groupid,$ACCESS_TOKEN,$deep=1,$refresh=false){
         $groups=self::getAllGroups($ACCESS_TOKEN,$refresh);
+        $subgroups=[];
         foreach ($groups as $group) {
-            if(!isset($group['parentid'])) $group['parentid']=0;
-            if($group['parentid']==$groupid){
-                $group['top']=$deep;
-                array_push($subgroups,$group);
-                if($deep>0){
-                    $subagain=self::getSubGroups($group['id'],$ACCESS_TOKEN,$deep,$refresh);
-                    $subgroups=array_merge($subgroups,$subagain);
+            
+
+            if(in_array($groupid, $group['parent_ids'])){
+                if($group['parent_ids'][count($group['parent_ids'])-$deep-1]==$groupid){
+                  array_push($subgroups,$group);  
                 }
-
             }
-        }
 
+        }
+        var_dump($subgroups);
+        exit;
         return $subgroups;
     }
     
@@ -212,7 +210,11 @@ class group{
                     'department_id'=>$groupid
                 )
             );
+            // echo 'x';
+            // echo "\nhttps://oapi.dingtalk.com/user/list?".$param;
             $response = Request::get('https://oapi.dingtalk.com/user/list?'.$param)->send();
+
+            echo 'o';
             if ($response->hasErrors()){
                 var_dump($response);
                 exit;
@@ -222,7 +224,9 @@ class group{
                 exit;
             }
             $groupusers = $response->body->userlist;
-            Cache::put('group_users_'.$groupid,$groupusers,30);  
+            Cache::put('group_users_'.$groupid,$groupusers,3000);  
+        }else{
+            echo 'x';
         }            
         return  $groupusers;
     }
