@@ -86,7 +86,8 @@ class group{
                 $groups=self::getAllGroups($ACCESS_TOKEN,$refresh);
                 foreach ($groups as $group) {
                     if($group['fullname']==$name){
-                        return $name;
+                        Cache::put('group_name_'.$name,$group,3600);
+                        return $group;
                     }
                 }
             }else{
@@ -112,6 +113,7 @@ class group{
                                 var_dump($add);        
                             }
                         }
+                        $pgroup=json_decode(json_encode($pgroup),true);
                         return $pgroup;
                         //return self::getGroupById($pgroup->id,$ACCESS_TOKEN,false,true);
                     }
@@ -214,7 +216,7 @@ class group{
             // echo "\nhttps://oapi.dingtalk.com/user/list?".$param;
             $response = Request::get('https://oapi.dingtalk.com/user/list?'.$param)->send();
 
-            echo 'o';
+            // echo 'o';
             if ($response->hasErrors()){
                 var_dump($response);
                 exit;
@@ -226,7 +228,7 @@ class group{
             $groupusers = $response->body->userlist;
             Cache::put('group_users_'.$groupid,$groupusers,3000);  
         }else{
-            echo 'x';
+            //echo 'x';
         }            
         return  $groupusers;
     }

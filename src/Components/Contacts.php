@@ -70,6 +70,7 @@ class contacts{
          if(empty($allusers) || $refresh){
                 $allusers=[];
                 $groups=Group::getAllGroups($ACCESS_TOKEN,$refresh); 
+                 $groups=array_values($groups);
                 $percent=0;
                 foreach ($groups as $idx=>$group) {
                     if(intval($idx*100/count($groups))>$percent){
