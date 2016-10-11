@@ -170,6 +170,7 @@ class group{
 
             Cache::put('group_'.$groupid, $group,300);  
         }
+
         return $group;
     }
 
@@ -196,8 +197,7 @@ class group{
             }
 
         }
-        var_dump($subgroups);
-        exit;
+ 
         return $subgroups;
     }
     
