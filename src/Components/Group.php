@@ -270,12 +270,12 @@ class group{
             if ($response->hasErrors()){
                     var_dump($group);
                 var_dump($response);
-                exit;
+                //exit;
             }
             if ($response->body->errcode != 0){
                 var_dump($group);
                 var_dump($response->body);
-                exit;
+               // exit;
             }
             return $response->body;
     }
