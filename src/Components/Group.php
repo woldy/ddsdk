@@ -188,12 +188,13 @@ class group{
         $groups=self::getAllGroups($ACCESS_TOKEN,$refresh);
         $subgroups=[];
         foreach ($groups as $group) {
-            
-
             if(in_array($groupid, $group['parent_ids'])){
-                if($group['parent_ids'][count($group['parent_ids'])-$deep-1]==$groupid){
-                  array_push($subgroups,$group);  
-                }
+                // if(count($group['parent_ids'])>$deep){
+                //     if($group['parent_ids'][count($group['parent_ids'])-$deep-1]==$groupid){
+                        array_push($subgroups,$group);  
+                 //   }
+               // }
+
             }
 
         }
