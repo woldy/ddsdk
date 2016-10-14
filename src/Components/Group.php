@@ -268,10 +268,12 @@ class group{
                 ->sendsJson()
                 ->send();
             if ($response->hasErrors()){
+                    var_dump($group);
                 var_dump($response);
                 exit;
             }
             if ($response->body->errcode != 0){
+                var_dump($group);
                 var_dump($response->body);
                 exit;
             }
