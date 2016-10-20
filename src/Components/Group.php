@@ -192,7 +192,7 @@ class group{
                 if($deep==0){//全部子部门
                    array_push($subgroups,$group);   
                 }else{//指定深度内
-                    if(count($group['parent_ids'])+1>$deep){
+                    if(count($group['parent_ids'])>$deep){
                         if($group['parent_ids'][count($group['parent_ids'])-$deep-1]==$groupid){
                             $gidx=array_search($groupid,$group['parent_ids']);
                             $sidx=array_search($group['id'],$group['parent_ids']);
