@@ -188,13 +188,20 @@ class group{
         $groups=self::getAllGroups($ACCESS_TOKEN,$refresh);
         $subgroups=[];
         foreach ($groups as $group) {
-            if(in_array($groupid, $group['parent_ids'])){
-                // if(count($group['parent_ids'])>$deep){
-                //     if($group['parent_ids'][count($group['parent_ids'])-$deep-1]==$groupid){
-                        array_push($subgroups,$group);  
-                 //   }
-               // }
-
+            if(in_array($groupid, $group['parent_ids'])){    //groupid在subgroup的parentid(1,aaa,bbb,ccc,parentid,eee,fff,subid)中
+                if($deep==0){//全部子部门
+                   array_push($subgroups,$group);   
+                }else{//指定深度内
+                    if(count($group['parent_ids'])+1>$deep){
+                        if($group['parent_ids'][count($group['parent_ids'])-$deep-1]==$groupid){
+                            $gidx=array_search($groupid,$group['parent_ids']);
+                            $sidx=array_search($group['id'],$group['parent_ids']);
+                            if($sidx-$gidx<=$deep){
+                                array_push($subgroups,$group); 
+                            }
+                        }
+                    }
+                }
             }
 
         }
