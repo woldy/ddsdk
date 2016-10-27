@@ -107,10 +107,13 @@ class group{
                                 echo 'add group: '.$group['fullname'].'-'. $add_name."\n";
                                 Log::info("ding|group_add|".$group['fullname'].'-'. $add_name);
                             }else{
+                              
                                 echo 'can\'t  add department: ';
-                                var_dump(self::getGroupById($parentid,$ACCESS_TOKEN)['fullname']);
-                                var_dump($namepart);       
-                                var_dump($add);        
+                                var_dump($pgroup);
+                                var_dump($ACCESS_TOKEN);
+                                //var_dump(self::getGroupById($pgroup->id,$ACCESS_TOKEN)['fullname']);
+                                var_dump($group['fullname'].'-'. $add_name);       
+                                        
                             }
                         }
                         $pgroup=json_decode(json_encode($pgroup),true);

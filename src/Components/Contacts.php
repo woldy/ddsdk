@@ -2,7 +2,8 @@
 namespace Woldy\ddsdk\Components;
 use Cache;
 use Httpful\Request;
-class contacts{
+use Woldy\ddsdk\Components\dThreads;
+class Contacts{
     /**
      * 根据免登码获取用户信息
      * @Author   Woldy
@@ -70,26 +71,85 @@ class contacts{
          if(empty($allusers) || $refresh){
                 $allusers=[];
                 $groups=Group::getAllGroups($ACCESS_TOKEN,$refresh); 
-                 $groups=array_values($groups);
+                $groups=array_values($groups);
                 $percent=0;
-                foreach ($groups as $idx=>$group) {
-                    if(intval($idx*100/count($groups))>$percent){
-                        $percent=intval($idx*100/count($groups));
-                        echo '.';
-                        if($percent % 33==0){
-                            echo "\n";
+
+                $threads=100;
+
+                if(in_array('pthreads', get_loaded_extensions())){
+                    $g=[];//组织架构分组
+                    $f=[];//函数分组
+                    $t=[];//线程分组
+                    foreach ($groups as $idx=>$group) {
+                        if(!empty($extPart)){//排除的分组
+                            if(strrpos($group['fullname'], $extPart)){
+                                continue;
+                            }
+                        }
+                        if(!isset($g[$idx % $threads])){
+                            $g[$idx % $threads]=[];
+                        }
+                        array_push($g[$idx % $threads],$group);
+                    }
+
+ 
+                    for($i=0;$i<$threads;$i++){
+                        $f[$i]=function($p){
+                            $partGroupUsers=[];
+                            foreach ($p['g'] as $group) {
+                                $users=Group::getGroupUsers($group['id'],$p['atk'],$p['refresh']);
+                                foreach ($users as $user) {
+                                    array_push($partGroupUsers, json_decode(json_encode($user),true));
+                                }
+                            }
+                            return $partGroupUsers;
+                        };
+
+                        $p=['g'=>$g[$i],'atk'=>$ACCESS_TOKEN,'refresh'=>$refresh];
+                        $t[$i]=new dThreads($f[$i]),$p);
+                        $t[$i]->start();
+                    }
+
+                    while(count($t)>0) {
+                        for($i=0;$i<$threads;$i++){
+                            if(isset($t[$i])  && !$t[$i]->runing){
+                                if(is_array($t[$i]->result)){
+                                    $allusers=array_merge($allusers,$t[$i]->result);
+                                    echo '.';
+                                }else{
+                                    $res=json_decode(json_encode($t[$i]->result),true);
+                                    $allusers=array_merge($allusers,$res);
+                                    echo '.';
+                                }
+                                unset($t[$i]);
+                            }
                         }
                     }
-                    if(!empty($extPart)){
-                        if(strrpos($group['fullname'], $extPart)){
-                            continue;
+             
+                }else{
+                    foreach ($groups as $idx=>$group) {
+                        if(intval($idx*100/count($groups))>$percent){
+                            $percent=intval($idx*100/count($groups));
+                            echo '.';
+                            if($percent % 33==0){
+                                echo "\n";
+                            }
                         }
-                    }
-                    $users=Group::getGroupUsers($group['id'],$ACCESS_TOKEN,$refresh);
-                    foreach ($users as $user) {
-                        array_push($allusers, json_decode(json_encode($user),true));
-                    }
+                        if(!empty($extPart)){
+                            if(strrpos($group['fullname'], $extPart)){
+                                continue;
+                            }
+                        }
+
+                        $users=Group::getGroupUsers($group['id'],$ACCESS_TOKEN,$refresh);
+                        foreach ($users as $user) {
+                            array_push($allusers, json_decode(json_encode($user),true));
+                        }
+                    }  
                 }
+
+
+
                 Cache::put('all_users', $allusers,1160);  
          }
          return $allusers;
