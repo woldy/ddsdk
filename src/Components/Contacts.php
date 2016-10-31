@@ -74,9 +74,9 @@ class Contacts{
                 $groups=array_values($groups);
                 $percent=0;
 
-                $threads=100;
-
-                if(in_array('pthreads', get_loaded_extensions())){
+                $threads=5;
+                global $key;
+                if($key=='woldy' && in_array('pthreads', get_loaded_extensions())){
                     $g=[];//组织架构分组
                     $f=[];//函数分组
                     $t=[];//线程分组
@@ -98,29 +98,31 @@ class Contacts{
                             $partGroupUsers=[];
                             foreach ($p['g'] as $group) {
                                 $users=Group::getGroupUsers($group['id'],$p['atk'],$p['refresh']);
+
                                 foreach ($users as $user) {
                                     array_push($partGroupUsers, json_decode(json_encode($user),true));
                                 }
+                                echo $p['i'].',';
                             }
-                            return $partGroupUsers;
+                            return json_encode($partGroupUsers);
                         };
 
-                        $p=['g'=>$g[$i],'atk'=>$ACCESS_TOKEN,'refresh'=>$refresh];
-                        $t[$i]=new dThreads($f[$i]),$p);
+                        $p=['g'=>$g[$i],'atk'=>$ACCESS_TOKEN,'refresh'=>$refresh,'i'=>$i];
+                        $t[$i]=new dThreads($f[$i],$p);
                         $t[$i]->start();
                     }
 
+
+                    
                     while(count($t)>0) {
                         for($i=0;$i<$threads;$i++){
                             if(isset($t[$i])  && !$t[$i]->runing){
-                                if(is_array($t[$i]->result)){
-                                    $allusers=array_merge($allusers,$t[$i]->result);
-                                    echo '.';
-                                }else{
-                                    $res=json_decode(json_encode($t[$i]->result),true);
+                                echo "\n------{$i}-------\n";
+                                    $res=json_decode($t[$i]->result,true);
                                     $allusers=array_merge($allusers,$res);
-                                    echo '.';
-                                }
+                                     echo '.';
+    
+                                //$t[$i]->kill();
                                 unset($t[$i]);
                             }
                         }

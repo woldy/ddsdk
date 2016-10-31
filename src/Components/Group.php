@@ -81,7 +81,8 @@ class group{
      */
     public static function getGroupByName($name,$ACCESS_TOKEN,$refresh=false){
             $group=Cache::get('group_name_'.$name);
-            
+            var_dump($group);
+            exit;
             if(empty($group) || $refresh){
                 $groups=self::getAllGroups($ACCESS_TOKEN,$refresh);
                 foreach ($groups as $group) {
@@ -232,6 +233,14 @@ class group{
                 var_dump($response);
                 exit;
             }
+
+            if(!isset($response->body->errcode)){
+                $response->body=json_decode($response->body);
+                // var_dump($response->body);
+                // exit;           
+            }
+ 
+
             if ($response->body->errcode != 0){
                 var_dump($response->body);
                 exit;

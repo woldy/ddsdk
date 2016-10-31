@@ -25,6 +25,10 @@ class dd{
 		return self::$token->getJsConfig();
 	}
 
+	public static function test(){
+		echo 'ddtest';
+	}
+
 
 	/**
 	 * 获取SSO配置
