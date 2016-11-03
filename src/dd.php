@@ -5,6 +5,7 @@ use Woldy\ddsdk\Components\Token;
 use Woldy\ddsdk\Components\Message;
 use Woldy\ddsdk\Components\Contacts;
 use Woldy\ddsdk\Components\Group;
+use Woldy\ddsdk\Components\Chat;
 use Illuminate\Support\Facades\Input;
 class dd{
 	static $config;
@@ -108,6 +109,13 @@ class dd{
 		return $userinfo;
 	}
 
+
+	public static function getUserIdByUnionId($unionid){
+		return Contacts::getUserIdByUnionId(self::$ACCESS_TOKEN,$unionid);
+
+	}
+
+
 	/**
 	 * 删除用户
 	 * @Author   Woldy
@@ -181,10 +189,14 @@ class dd{
 		return Group::delGroup($groupid,$accesstoken);	
 	}
 
+	public static function getChat($chatid){
+		$accesstoken=self::$ACCESS_TOKEN;
+		return Chat::getChat($accesstoken,$chatid);	
+	}
 
 	public static function getGroupByName($groupName,$refresh=false){
 		$accesstoken=self::$ACCESS_TOKEN;
-		return Group::getGroupByName($groupName,$accesstoken,1,$refresh);			
+		return Group::getGroupByName($groupName,$accesstoken,$refresh);			
 	}	
 
 

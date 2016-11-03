@@ -25,6 +25,9 @@ class Contacts{
             	var_dump($response);
             	exit;
         	}
+            if(!is_object($response->body)){
+                $response->body=json_decode($response->body);
+            }   
         	if ($response->body->errcode != 0){
             	var_dump($response->body);
             	exit;
@@ -55,6 +58,9 @@ class Contacts{
             	var_dump($response);
             	exit;
         	}
+            if(!is_object($response->body)){
+            $response->body=json_decode($response->body);
+            }   
         	if ($response->body->errcode != 0){
             	// var_dump($response->body);
             	// exit;
@@ -74,7 +80,7 @@ class Contacts{
                 $groups=array_values($groups);
                 $percent=0;
 
-                $threads=5;
+                $threads=6;
                 global $key;
                 if($key=='woldy' && in_array('pthreads', get_loaded_extensions())){
                     $g=[];//组织架构分组
@@ -185,12 +191,15 @@ class Contacts{
     public static function addUser($ACCESS_TOKEN,$user){
         $response = Request::post('https://oapi.dingtalk.com/user/create?access_token='.$ACCESS_TOKEN)
             ->body(json_encode($user))
-            ->sendsJson()
+            ->sends('application/json','application/json')
             ->send();
         if ($response->hasErrors()){
             // var_dump($response);
             // exit;
         }
+        if(!is_object($response->body)){
+            $response->body=json_decode($response->body);
+        }   
         if ($response->body->errcode != 0){
             // var_dump($response->body);
             // exit;
@@ -201,17 +210,29 @@ class Contacts{
 
     public static function updateUser($ACCESS_TOKEN,$user){
         $response = Request::post('https://oapi.dingtalk.com/user/update?access_token='.$ACCESS_TOKEN)
-            ->body(json_encode($user))
-            ->sendsJson()
+            ->body(json_encode($user),'json')
+            ->sends('application/json')
             ->send();
+               
+ 
+ 
         if ($response->hasErrors()){
             // var_dump($response);
             // exit;
         }
+
+        if(!is_object($response->body)){
+            $response->body=json_decode($response->body);
+        }   
         if ($response->body->errcode != 0){
-            // var_dump($response->body);
-            // exit;
+        	        var_dump($user);
+        var_dump($response->body);
+            var_dump($response->body);
+            exit;
         }
+
+
+
         return $response->body;
     }
 
@@ -235,6 +256,9 @@ class Contacts{
                 var_dump($response);
                 exit;
             }
+        if(!is_object($response->body)){
+            $response->body=json_decode($response->body);
+        }   
             if ($response->body->errcode != 0){
                return $response->body;
             }
@@ -265,6 +289,9 @@ class Contacts{
                 var_dump($response);
                 exit;
             }
+        if(!is_object($response->body)){
+            $response->body=json_decode($response->body);
+        }   
             if ($response->body->errcode != 0){
                 return $response->body;
             }
@@ -290,6 +317,9 @@ class Contacts{
                // var_dump($response);
                // exit;
             }
+        if(!is_object($response->body)){
+            $response->body=json_decode($response->body);
+        }   
             if ($response->body->errcode != 0){
                 //return $response->body;
             }
@@ -310,12 +340,15 @@ class Contacts{
         ];
         $response = Request::post('https://oapi.dingtalk.com/message/send_to_conversation?access_token='.$ACCESS_TOKEN)
             ->body(json_encode($param))
-            ->sendsJson()
+            ->sends('application/json')()
             ->send();
         if ($response->hasErrors()){
             var_dump($response);
             exit;
         }
+        if(!is_object($response->body)){
+            $response->body=json_decode($response->body);
+        }   
         if ($response->body->errcode != 0){
              var_dump($response->body);
             exit;
@@ -335,12 +368,15 @@ class Contacts{
         ];
         $response = Request::post('https://oapi.dingtalk.com/chat/create?access_token='.$ACCESS_TOKEN)
             ->body(json_encode($param))
-            ->sendsJson()
+            ->sends('application/json')()
             ->send();
         if ($response->hasErrors()){
             var_dump($response);
             exit;
         }
+        if(!is_object($response->body)){
+            $response->body=json_decode($response->body);
+        }   
         if ($response->body->errcode != 0){
              var_dump($response->body);
             exit;
