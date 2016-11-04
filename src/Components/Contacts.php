@@ -340,7 +340,7 @@ class Contacts{
         ];
         $response = Request::post('https://oapi.dingtalk.com/message/send_to_conversation?access_token='.$ACCESS_TOKEN)
             ->body(json_encode($param))
-            ->sends('application/json')()
+            ->sends('application/json')
             ->send();
         if ($response->hasErrors()){
             var_dump($response);
@@ -368,7 +368,7 @@ class Contacts{
         ];
         $response = Request::post('https://oapi.dingtalk.com/chat/create?access_token='.$ACCESS_TOKEN)
             ->body(json_encode($param))
-            ->sends('application/json')()
+            ->sends('application/json')
             ->send();
         if ($response->hasErrors()){
             var_dump($response);

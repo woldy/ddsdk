@@ -109,7 +109,7 @@ class Token{
             //die('https://oapi.dingtalk.com/gettoken?'.$param);
             $response = Request::post('https://oapi.dingtalk.com/sns/get_persistent_code?access_token='.$accesstoken)
                 ->body($param)
-                ->sends('application/json')()
+                ->sends('application/json')
                 ->send();
             if ($response->hasErrors()){
                 var_dump($response);
@@ -147,7 +147,7 @@ class Token{
             //die('https://oapi.dingtalk.com/gettoken?'.$param);
             $response = Request::post('https://oapi.dingtalk.com/sns/get_sns_token?access_token='.$accesstoken)
                 ->body($param)
-                ->sends('application/json')()
+                ->sends('application/json')
                 ->send();
             if ($response->hasErrors()){
                 var_dump($response);

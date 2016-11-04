@@ -247,6 +247,7 @@ class group{
 
             // echo 'o';
             if ($response->hasErrors()){
+                var_dump('https://oapi.dingtalk.com/user/list?'.$param);
                 var_dump($response);
                 exit;
             }
@@ -257,6 +258,7 @@ class group{
  
 
             if ($response->body->errcode != 0){
+                var_dump('https://oapi.dingtalk.com/user/list?'.$param);
                 var_dump($response->body);
                 exit;
             }
@@ -302,7 +304,7 @@ class group{
     public static function updateGroup($group,$ACCESS_TOKEN){
             $response = Request::post('https://oapi.dingtalk.com/department/update?access_token='.$ACCESS_TOKEN)
                 ->body(json_encode($group))
-                ->sends('application/json')()
+                ->sends('application/json')
                 ->send();
             if ($response->hasErrors()){
                // echo $group['id'].',';

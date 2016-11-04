@@ -170,6 +170,7 @@ class dd{
 	}
 
 	public static function getGroupById($groupid,$sub=true,$refresh=false){
+		$groupid=preg_replace('/\D/','',$groupid);
 		$accesstoken=self::$ACCESS_TOKEN;
 		return Group::getGroupById($groupid,$accesstoken,$sub,$refresh);	
 	}
