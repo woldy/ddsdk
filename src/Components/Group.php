@@ -86,7 +86,7 @@ class group{
      * @param    boolean                  $refresh      [description]
      * @return   [type]                                 [description]
      */
-    public static function getGroupByName($name,$ACCESS_TOKEN,$refresh=false){
+    public static function getGroupByName($name,$ACCESS_TOKEN,$create=true,$refresh=false){
             $group=Cache::get('group_name_'.$name);
 
             if(empty($group) || $refresh){
@@ -100,13 +100,22 @@ class group{
             }else{
                 return $group;
             }
+
+            if (!$create) {
+                return false;
+            }
        
             $name_part=explode('-',$name);
+
+ 
+
+
             $add_group=[];
+
             while (count($name_part)>0) {
                 array_unshift($add_group,array_pop($name_part));
                 foreach ($groups as $group) {
-                    if($group['fullname']==implode('-',$name_part)){
+                    if($group['fullname']==implode('-',$name_part)){//查找上级
                         $pgroup=json_decode(json_encode(['id'=>$group['id']]));
                         foreach ($add_group as $add_name) {
                                 $add=self::createGroup($add_name,$pgroup->id,$ACCESS_TOKEN);
@@ -163,6 +172,8 @@ class group{
             }
 
             if ($response->body->errcode != 0){
+                var_dump($parentid);
+                var_dump($name);
                 var_dump($response->body);
                 exit;
             }
@@ -319,7 +330,7 @@ class group{
                 //echo $group['id'].',';
                 var_dump($group);
                  var_dump($response->body);
-               // exit;
+                //exit;
             }
             return $response->body;
     }
