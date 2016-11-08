@@ -37,6 +37,9 @@ class Token{
             	var_dump($response);
             	exit;
         	}
+            if(!is_object($response->body)){
+            $response->body=json_decode($response->body);
+        }   
         	if ($response->body->errcode != 0){
             	var_dump($response->body);
             	exit;
@@ -73,6 +76,9 @@ class Token{
                 var_dump($response);
                 exit;
             }
+            if(!is_object($response->body)){
+            $response->body=json_decode($response->body);
+        }   
             if ($response->body->errcode != 0){
                 var_dump($response->body);
                 exit;
@@ -103,12 +109,15 @@ class Token{
             //die('https://oapi.dingtalk.com/gettoken?'.$param);
             $response = Request::post('https://oapi.dingtalk.com/sns/get_persistent_code?access_token='.$accesstoken)
                 ->body($param)
-                ->sendsJson()
+                ->sends('application/json')
                 ->send();
             if ($response->hasErrors()){
                 var_dump($response);
                 exit;
             }
+            if(!is_object($response->body)){
+            $response->body=json_decode($response->body);
+        }   
             if ($response->body->errcode != 0){
                 var_dump($response->body);
                 exit;
@@ -138,12 +147,15 @@ class Token{
             //die('https://oapi.dingtalk.com/gettoken?'.$param);
             $response = Request::post('https://oapi.dingtalk.com/sns/get_sns_token?access_token='.$accesstoken)
                 ->body($param)
-                ->sendsJson()
+                ->sends('application/json')
                 ->send();
             if ($response->hasErrors()){
                 var_dump($response);
                 exit;
             }
+            if(!is_object($response->body)){
+            $response->body=json_decode($response->body);
+        }   
             if ($response->body->errcode != 0){
                 var_dump($response->body);
                 exit;
@@ -177,6 +189,9 @@ class Token{
             	var_dump($response);
             	exit;
         	}
+            if(!is_object($response->body)){
+            $response->body=json_decode($response->body);
+        }   
         	if ($response->body->errcode != 0){
             	var_dump($response->body);
             	exit;

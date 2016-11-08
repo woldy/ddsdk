@@ -2,7 +2,8 @@
 namespace Woldy\ddsdk\Components;
 use Cache;
 use Httpful\Request;
-class contacts{
+use Woldy\ddsdk\Components\dThreads;
+class Contacts{
     /**
      * 根据免登码获取用户信息
      * @Author   Woldy
@@ -24,6 +25,9 @@ class contacts{
             	var_dump($response);
             	exit;
         	}
+            if(!is_object($response->body)){
+                $response->body=json_decode($response->body);
+            }   
         	if ($response->body->errcode != 0){
             	var_dump($response->body);
             	exit;
@@ -54,6 +58,9 @@ class contacts{
             	var_dump($response);
             	exit;
         	}
+            if(!is_object($response->body)){
+            $response->body=json_decode($response->body);
+            }   
         	if ($response->body->errcode != 0){
             	// var_dump($response->body);
             	// exit;
@@ -70,26 +77,87 @@ class contacts{
          if(empty($allusers) || $refresh){
                 $allusers=[];
                 $groups=Group::getAllGroups($ACCESS_TOKEN,$refresh); 
-                 $groups=array_values($groups);
+                $groups=array_values($groups);
                 $percent=0;
-                foreach ($groups as $idx=>$group) {
-                    if(intval($idx*100/count($groups))>$percent){
-                        $percent=intval($idx*100/count($groups));
-                        echo '.';
-                        if($percent % 33==0){
-                            echo "\n";
+
+                $threads=6;
+                global $key;
+                if($key=='woldy' && in_array('pthreads', get_loaded_extensions())){
+                    $g=[];//组织架构分组
+                    $f=[];//函数分组
+                    $t=[];//线程分组
+                    foreach ($groups as $idx=>$group) {
+                        if(!empty($extPart)){//排除的分组
+                            if(strrpos($group['fullname'], $extPart)){
+                                continue;
+                            }
+                        }
+                        if(!isset($g[$idx % $threads])){
+                            $g[$idx % $threads]=[];
+                        }
+                        array_push($g[$idx % $threads],$group);
+                    }
+
+ 
+                    for($i=0;$i<$threads;$i++){
+                        $f[$i]=function($p){
+                            $partGroupUsers=[];
+                            foreach ($p['g'] as $group) {
+                                $users=Group::getGroupUsers($group['id'],$p['atk'],$p['refresh']);
+
+                                foreach ($users as $user) {
+                                    array_push($partGroupUsers, json_decode(json_encode($user),true));
+                                }
+                                echo $p['i'].',';
+                            }
+                            return json_encode($partGroupUsers);
+                        };
+
+                        $p=['g'=>$g[$i],'atk'=>$ACCESS_TOKEN,'refresh'=>$refresh,'i'=>$i];
+                        $t[$i]=new dThreads($f[$i],$p);
+                        $t[$i]->start();
+                    }
+
+
+                    
+                    while(count($t)>0) {
+                        for($i=0;$i<$threads;$i++){
+                            if(isset($t[$i])  && !$t[$i]->runing){
+                                echo "\n------{$i}-------\n";
+                                    $res=json_decode($t[$i]->result,true);
+                                    $allusers=array_merge($allusers,$res);
+                                     echo '.';
+    
+                                //$t[$i]->kill();
+                                unset($t[$i]);
+                            }
                         }
                     }
-                    if(!empty($extPart)){
-                        if(strrpos($group['fullname'], $extPart)){
-                            continue;
+             
+                }else{
+                    foreach ($groups as $idx=>$group) {
+                        if(intval($idx*100/count($groups))>$percent){
+                            $percent=intval($idx*100/count($groups));
+                            echo '.';
+                            if($percent % 33==0){
+                                echo "\n";
+                            }
                         }
-                    }
-                    $users=Group::getGroupUsers($group['id'],$ACCESS_TOKEN,$refresh);
-                    foreach ($users as $user) {
-                        array_push($allusers, json_decode(json_encode($user),true));
-                    }
+                        if(!empty($extPart)){
+                            if(strrpos($group['fullname'], $extPart)){
+                                continue;
+                            }
+                        }
+
+                        $users=Group::getGroupUsers($group['id'],$ACCESS_TOKEN,$refresh);
+                        foreach ($users as $user) {
+                            array_push($allusers, json_decode(json_encode($user),true));
+                        }
+                    }  
                 }
+
+
+
                 Cache::put('all_users', $allusers,1160);  
          }
          return $allusers;
@@ -123,12 +191,15 @@ class contacts{
     public static function addUser($ACCESS_TOKEN,$user){
         $response = Request::post('https://oapi.dingtalk.com/user/create?access_token='.$ACCESS_TOKEN)
             ->body(json_encode($user))
-            ->sendsJson()
+            ->sends('application/json','application/json')
             ->send();
         if ($response->hasErrors()){
             // var_dump($response);
             // exit;
         }
+        if(!is_object($response->body)){
+            $response->body=json_decode($response->body);
+        }   
         if ($response->body->errcode != 0){
             // var_dump($response->body);
             // exit;
@@ -139,17 +210,29 @@ class contacts{
 
     public static function updateUser($ACCESS_TOKEN,$user){
         $response = Request::post('https://oapi.dingtalk.com/user/update?access_token='.$ACCESS_TOKEN)
-            ->body(json_encode($user))
-            ->sendsJson()
+            ->body(json_encode($user),'json')
+            ->sends('application/json')
             ->send();
+               
+ 
+ 
         if ($response->hasErrors()){
             // var_dump($response);
             // exit;
         }
+
+        if(!is_object($response->body)){
+            $response->body=json_decode($response->body);
+        }   
         if ($response->body->errcode != 0){
-            // var_dump($response->body);
-            // exit;
+        	        var_dump($user);
+        var_dump($response->body);
+            var_dump($response->body);
+            exit;
         }
+
+
+
         return $response->body;
     }
 
@@ -173,6 +256,9 @@ class contacts{
                 var_dump($response);
                 exit;
             }
+        if(!is_object($response->body)){
+            $response->body=json_decode($response->body);
+        }   
             if ($response->body->errcode != 0){
                return $response->body;
             }
@@ -203,6 +289,9 @@ class contacts{
                 var_dump($response);
                 exit;
             }
+        if(!is_object($response->body)){
+            $response->body=json_decode($response->body);
+        }   
             if ($response->body->errcode != 0){
                 return $response->body;
             }
@@ -228,6 +317,9 @@ class contacts{
                // var_dump($response);
                // exit;
             }
+        if(!is_object($response->body)){
+            $response->body=json_decode($response->body);
+        }   
             if ($response->body->errcode != 0){
                 //return $response->body;
             }
@@ -248,12 +340,15 @@ class contacts{
         ];
         $response = Request::post('https://oapi.dingtalk.com/message/send_to_conversation?access_token='.$ACCESS_TOKEN)
             ->body(json_encode($param))
-            ->sendsJson()
+            ->sends('application/json')
             ->send();
         if ($response->hasErrors()){
             var_dump($response);
             exit;
         }
+        if(!is_object($response->body)){
+            $response->body=json_decode($response->body);
+        }   
         if ($response->body->errcode != 0){
              var_dump($response->body);
             exit;
@@ -273,12 +368,15 @@ class contacts{
         ];
         $response = Request::post('https://oapi.dingtalk.com/chat/create?access_token='.$ACCESS_TOKEN)
             ->body(json_encode($param))
-            ->sendsJson()
+            ->sends('application/json')
             ->send();
         if ($response->hasErrors()){
             var_dump($response);
             exit;
         }
+        if(!is_object($response->body)){
+            $response->body=json_decode($response->body);
+        }   
         if ($response->body->errcode != 0){
              var_dump($response->body);
             exit;

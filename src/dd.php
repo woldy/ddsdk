@@ -5,6 +5,8 @@ use Woldy\ddsdk\Components\Token;
 use Woldy\ddsdk\Components\Message;
 use Woldy\ddsdk\Components\Contacts;
 use Woldy\ddsdk\Components\Group;
+use Woldy\ddsdk\Components\Chat;
+use Woldy\ddsdk\Components\App;
 use Illuminate\Support\Facades\Input;
 class dd{
 	static $config;
@@ -25,6 +27,10 @@ class dd{
 		return self::$token->getJsConfig();
 	}
 
+	public static function test(){
+		echo 'ddtest';
+	}
+
 
 	/**
 	 * 获取SSO配置
@@ -38,6 +44,10 @@ class dd{
 			return $ssolist[$ssoid];
 		}
 	}
+
+
+
+
 
 	/**
 	 * 根据免登CODE获取用户信息
@@ -104,6 +114,13 @@ class dd{
 		return $userinfo;
 	}
 
+
+	public static function getUserIdByUnionId($unionid){
+		return Contacts::getUserIdByUnionId(self::$ACCESS_TOKEN,$unionid);
+
+	}
+
+
 	/**
 	 * 删除用户
 	 * @Author   Woldy
@@ -158,6 +175,7 @@ class dd{
 	}
 
 	public static function getGroupById($groupid,$sub=true,$refresh=false){
+		$groupid=preg_replace('/\D/','',$groupid);
 		$accesstoken=self::$ACCESS_TOKEN;
 		return Group::getGroupById($groupid,$accesstoken,$sub,$refresh);	
 	}
@@ -177,14 +195,29 @@ class dd{
 		return Group::delGroup($groupid,$accesstoken);	
 	}
 
-
-	public static function getGroupByName($groupName,$refresh=false){
+	public static function getChat($chatid){
 		$accesstoken=self::$ACCESS_TOKEN;
-		return Group::getGroupByName($groupName,$accesstoken,1,$refresh);			
+		return Chat::getChat($accesstoken,$chatid);	
+	}
+
+
+	public static function getApp($agentId){
+		$accesstoken=self::$ACCESS_TOKEN;
+		return App::getApp($accesstoken,$agentId);		
+	}
+
+	public static function setApp($app){
+		$accesstoken=self::$ACCESS_TOKEN;
+		return App::setApp($accesstoken,$app);		
+	}
+
+	public static function getGroupByName($groupName,$create=true,$refresh=false){
+		$accesstoken=self::$ACCESS_TOKEN;
+		return Group::getGroupByName($groupName,$accesstoken,$create,$refresh);			
 	}	
 
 
-	public static function createGroup($name,$parentid,$ACCESS_TOKEN){
+	public static function createGroup($name,$parentid){
 		$ACCESS_TOKEN=self::$ACCESS_TOKEN;
 		return Group::createGroup($name,$parentid,$ACCESS_TOKEN);
 	}

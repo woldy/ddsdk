@@ -89,12 +89,15 @@ class Message{
         	//exit;
             $response = Request::post('https://oapi.dingtalk.com/message/send?access_token='.$ACCESS_TOKEN)
             	->body(json_encode($param))
-            	->sendsJson()
+            	->sends('application/json')
             	->send();
             if ($response->hasErrors()){
             	var_dump($response);
             	exit;
         	}
+        if(!is_object($response->body)){
+            $response->body=json_decode($response->body);
+        }   
         	if ($response->body->errcode != 0){
             	var_dump($response->body);
             	exit;

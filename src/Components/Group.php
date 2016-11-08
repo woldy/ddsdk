@@ -21,12 +21,18 @@ class group{
                         'access_token'=>$ACCESS_TOKEN
                     )
                 );
-            
                 $response = Request::get('https://oapi.dingtalk.com/department/list?'.$param)->send();
+
+
                 if ($response->hasErrors()){
                     var_dump($response);
                     exit;
                 }
+
+                if(!is_object($response->body)){
+                    $response->body=json_decode($response->body);
+                }
+
                 if ($response->body->errcode != 0){
                     var_dump($response->body);
                     exit;
@@ -63,6 +69,7 @@ class group{
                 Cache::put('all_groups', $groups,200);  
                             
             }
+
             return  $allgroups;
 
 	}
@@ -79,9 +86,9 @@ class group{
      * @param    boolean                  $refresh      [description]
      * @return   [type]                                 [description]
      */
-    public static function getGroupByName($name,$ACCESS_TOKEN,$refresh=false){
+    public static function getGroupByName($name,$ACCESS_TOKEN,$create=true,$refresh=false){
             $group=Cache::get('group_name_'.$name);
-            
+
             if(empty($group) || $refresh){
                 $groups=self::getAllGroups($ACCESS_TOKEN,$refresh);
                 foreach ($groups as $group) {
@@ -93,27 +100,45 @@ class group{
             }else{
                 return $group;
             }
+
+            if (!$create) {
+                return false;
+            }
        
             $name_part=explode('-',$name);
+
+ 
+
+
             $add_group=[];
+
             while (count($name_part)>0) {
                 array_unshift($add_group,array_pop($name_part));
                 foreach ($groups as $group) {
-                    if($group['fullname']==implode('-',$name_part)){
+                    if($group['fullname']==implode('-',$name_part)){//查找上级
                         $pgroup=json_decode(json_encode(['id'=>$group['id']]));
                         foreach ($add_group as $add_name) {
-                            $pgroup=self::createGroup($add_name,$pgroup->id,$ACCESS_TOKEN);
-                                if($pgroup->errcode==0){
-                                echo 'add group: '.$group['fullname'].'-'. $add_name."\n";
-                                Log::info("ding|group_add|".$group['fullname'].'-'. $add_name);
-                            }else{
-                                echo 'can\'t  add department: ';
-                                var_dump(self::getGroupById($parentid,$ACCESS_TOKEN)['fullname']);
-                                var_dump($namepart);       
-                                var_dump($add);        
+                                $add=self::createGroup($add_name,$pgroup->id,$ACCESS_TOKEN);
+                                if($add->errcode==0){
+                                    $pgroup=self::getGroupByName($group['fullname'],$ACCESS_TOKEN,true,true);
+                                    echo 'add group: '.$group['fullname'].'-'. $add_name."\n";
+                                    Log::info("ding|group_add|".$group['fullname'].'-'. $add_name);
+                                }else if($add->errcode==60008){
+                                    $pgroup=self::getGroupByName($group['fullname'],$ACCESS_TOKEN,true,true);
+                                }else{
+                                
+                                    echo 'can\'t  add department: ';
+                                    var_dump($pgroup);
+                                    var_dump($add);
+                                    var_dump($ACCESS_TOKEN);
+                                    //var_dump(self::getGroupById($pgroup->id,$ACCESS_TOKEN)['fullname']);
+                                    var_dump($group['fullname'].'-'. $add_name);       
+                                        
                             }
                         }
                         $pgroup=json_decode(json_encode($pgroup),true);
+                        // var_dump($pgroup);
+                        // exit;
                         return $pgroup;
                         //return self::getGroupById($pgroup->id,$ACCESS_TOKEN,false,true);
                     }
@@ -131,20 +156,27 @@ class group{
                 'name'=>$name,
                 'parentid'=>$parentid,
             );
-
+ 
             $response = Request::post('https://oapi.dingtalk.com/department/create?access_token='.$ACCESS_TOKEN)
-                ->body(json_encode($param))
-                ->sendsJson()
-                ->send();
+            ->body(json_encode($param),'json')
+            ->sends('application/json')
+            ->send();
+
             if ($response->hasErrors()){
                 // var_dump($response);
                 // exit;
             }
-            if ($response->body->errcode != 0){
-                // var_dump($response->body);
-                // exit;
+
+            if(!is_object($response->body)){
+                $response->body=json_decode($response->body);
             }
 
+            if ($response->body->errcode != 0){
+                var_dump($parentid);
+                var_dump($name);
+                var_dump($response->body);
+                exit;
+            }
             return $response->body;
     }
 
@@ -226,10 +258,18 @@ class group{
 
             // echo 'o';
             if ($response->hasErrors()){
+                var_dump('https://oapi.dingtalk.com/user/list?'.$param);
                 var_dump($response);
                 exit;
             }
+
+            if(!isset($response->body->errcode)){
+                $response->body=json_decode($response->body);         
+            }
+ 
+
             if ($response->body->errcode != 0){
+                var_dump('https://oapi.dingtalk.com/user/list?'.$param);
                 var_dump($response->body);
                 exit;
             }
@@ -253,6 +293,9 @@ class group{
                 var_dump($response);
                 exit;
             }
+        if(!is_object($response->body)){
+            $response->body=json_decode($response->body);
+        }   
             if ($response->body->errcode != 0){
                 var_dump($response->body);
                 exit;
@@ -272,7 +315,7 @@ class group{
     public static function updateGroup($group,$ACCESS_TOKEN){
             $response = Request::post('https://oapi.dingtalk.com/department/update?access_token='.$ACCESS_TOKEN)
                 ->body(json_encode($group))
-                ->sendsJson()
+                ->sends('application/json')
                 ->send();
             if ($response->hasErrors()){
                // echo $group['id'].',';
@@ -280,11 +323,14 @@ class group{
                  var_dump($response);
                 //exit;
             }
+        if(!is_object($response->body)){
+            $response->body=json_decode($response->body);
+        }   
             if ($response->body->errcode != 0){
                 //echo $group['id'].',';
                 var_dump($group);
                  var_dump($response->body);
-               // exit;
+                //exit;
             }
             return $response->body;
     }
