@@ -29,20 +29,20 @@ class Chat{
 	}
 
 
-    public static function addToChat($ACCESS_TOKEN,$chatid,$ids){
-        $chat=self::getChat($ACCESS_TOKEN,$chatid);
-        if($chat['errcode']==0){
-            $chat=$chat['info'];
-        }else{
-            return $chat;
-        }
+    public static function addToChat($ACCESS_TOKEN,$user_ids,$chat_id){
+        // $chat=self::getChat($ACCESS_TOKEN,$chat_id);
+        // if($chat['errcode']==0){
+        //     $chat=$chat['info'];
+        // }else{
+        //     return $chat;
+        // }
 
         if(!is_array($ids)){
             $ids=explode(',', $ids);
         }
         $param=[
-            "chatid"=> $chatid,
-            "useridlist"=>array_merge($chat['useridlist'],$ids)
+            "chatid"=> $chat_id,
+            "add_useridlist"=>$ids
         ];
         $response = Request::post('https://oapi.dingtalk.com/chat/update?access_token='.$ACCESS_TOKEN)
             ->body(json_encode($param))

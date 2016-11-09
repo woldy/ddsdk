@@ -154,7 +154,7 @@ class dd{
 		return Chat::createChat($accesstoken,$user_ids,$chat_title);			
 	}
 
-	public static function addToChat($accesstoken,$chatid,$ids){
+	public static function addToChat($accesstoken,$user_ids,$chat_id){
 		$accesstoken=self::$ACCESS_TOKEN;
 		return Chat::addToChat($accesstoken,$user_ids,$chat_title);			
 	}
