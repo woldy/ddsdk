@@ -151,7 +151,17 @@ class dd{
 
 	public static function createChat($user_ids,$chat_title){
 		$accesstoken=self::$ACCESS_TOKEN;
-		return Contacts::createChat($accesstoken,$user_ids,$chat_title);			
+		return Chat::createChat($accesstoken,$user_ids,$chat_title);			
+	}
+
+	public static function addToChat($accesstoken,$chatid,$ids){
+		$accesstoken=self::$ACCESS_TOKEN;
+		return Chat::addToChat($accesstoken,$user_ids,$chat_title);			
+	}
+
+	public static function getChat($chatid){
+		$accesstoken=self::$ACCESS_TOKEN;
+		return Chat::get($accesstoken,$chatid);			
 	}
 
 	public static function getAllGroups($refresh=false){
@@ -193,11 +203,6 @@ class dd{
 	public static function delGroup($groupid){
 		$accesstoken=self::$ACCESS_TOKEN;
 		return Group::delGroup($groupid,$accesstoken);	
-	}
-
-	public static function getChat($chatid){
-		$accesstoken=self::$ACCESS_TOKEN;
-		return Chat::getChat($accesstoken,$chatid);	
 	}
 
 

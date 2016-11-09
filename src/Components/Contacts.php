@@ -357,31 +357,6 @@ class Contacts{
     }
 
 
-    public static function createChat($ACCESS_TOKEN,$ids,$chat_title='噗~'){
-        if(!is_array($ids)){
-            $ids=explode(',', $ids);
-        }
-        $param=[
-            "name"=> $chat_title,
-            "owner"=> $ids[0],
-            "useridlist"=>$ids
-        ];
-        $response = Request::post('https://oapi.dingtalk.com/chat/create?access_token='.$ACCESS_TOKEN)
-            ->body(json_encode($param))
-            ->sends('application/json')
-            ->send();
-        if ($response->hasErrors()){
-            var_dump($response);
-            exit;
-        }
-        if(!is_object($response->body)){
-            $response->body=json_decode($response->body);
-        }   
-        if ($response->body->errcode != 0){
-             var_dump($response->body);
-            exit;
-        }
-        return $response->body;           
-    }
+
 
 }

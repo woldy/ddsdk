@@ -197,7 +197,7 @@ class Token{
             	exit;
         	}
             $jsticket = $response->body->ticket;
-            Cache::put('js_ticket',$jsticket,60);
+            Cache::put('js_ticket',$jsticket,1);
         }
         return $jsticket;
 		//https://oapi.dingtalk.com/get_jsapi_ticket?access_token=ACCESS_TOKE
@@ -235,15 +235,18 @@ class Token{
         $timeStamp = time();
         $nonceStr = md5($timeStamp.'woldy');
         
+
         $url = $this->getCurPageURL();
+ 
         $corpAccessToken = $this->getAccessToken();
+         
         if (!$corpAccessToken)
         {
             Log::e("[getConfig] ERR: no corp access token");
         }
         $ticket = $this->getJsapiTicket($corpAccessToken);
         $signature = $this->getSignature($ticket, $nonceStr, $timeStamp, $url);
-        
+ 
         $config = array(
             'url' => $url,
             'nonceStr' => $nonceStr,
