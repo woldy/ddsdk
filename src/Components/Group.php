@@ -195,6 +195,16 @@ class group{
         $group=Cache::get('group_'.$subflag.$groupid);
         if(empty($group) || $refresh){
             $groups=self::getAllGroups($ACCESS_TOKEN,$refresh);
+            if(!isset($groups[$groupid])){
+                $groups=self::getAllGroups($ACCESS_TOKEN,true);
+                if(!isset($groups[$groupid])){
+                    return [
+                        'id'=>$groupid;
+                        'fullname'=>'unknown',
+                        'name'=>'unknown'
+                    ];
+                }
+            }
             $group=$groups[$groupid];
             if($sub){
                 $group['sub_groups']=self::getSubGroups($groupid,$ACCESS_TOKEN,1,$refresh);
