@@ -36,7 +36,7 @@ class Chat{
         // }else{
         //     return $chat;
         // }
-
+        $ids=$user_ids;
         if(!is_array($ids)){
             $ids=explode(',', $ids);
         }
