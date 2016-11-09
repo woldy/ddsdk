@@ -161,7 +161,7 @@ class dd{
 
 	public static function getChat($chatid){
 		$accesstoken=self::$ACCESS_TOKEN;
-		return Chat::get($accesstoken,$chatid);			
+		return Chat::getChat($accesstoken,$chatid);			
 	}
 
 	public static function getAllGroups($refresh=false){
