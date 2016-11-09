@@ -199,7 +199,7 @@ class group{
                 $groups=self::getAllGroups($ACCESS_TOKEN,true);
                 if(!isset($groups[$groupid])){
                     return [
-                        'id'=>$groupid;
+                        'id'=>$groupid,
                         'fullname'=>'unknown',
                         'name'=>'unknown'
                     ];
