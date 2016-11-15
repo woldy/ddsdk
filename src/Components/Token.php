@@ -228,15 +228,19 @@ class Token{
     }
 
 
-	public function getJsConfig(){
+	public function getJsConfig($appId='',$url=''){
         $corpId =$this->CorpID;
         $agentId = $this->AgentID;
-        $appId = $this->AppID;
+        if(empty($appId)){
+            $appId = $this->AppID;
+        }
         $timeStamp = time();
         $nonceStr = md5($timeStamp.'woldy');
         
-
-        $url = $this->getCurPageURL();
+        if(empty($url)){
+            $url = $this->getCurPageURL();
+        }
+        
  
         $corpAccessToken = $this->getAccessToken();
          

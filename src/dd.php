@@ -23,8 +23,8 @@ class dd{
 	 * @Author   Woldy
 	 * @DateTime 2016-05-09T17:01:32+0800
 	 */
-	public static function getJsConfig(){
-		return self::$token->getJsConfig();
+	public static function getJsConfig($appId='',$url=''){
+		return self::$token->getJsConfig($appId,$url);
 	}
 
 	public static function test(){
