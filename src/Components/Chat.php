@@ -72,6 +72,8 @@ class Chat{
             "owner"=> $ids[0],
             "useridlist"=>$ids
         ];
+
+        var_dump($param);
         $response = Request::post('https://oapi.dingtalk.com/chat/create?access_token='.$ACCESS_TOKEN)
             ->body(json_encode($param))
             ->sends('application/json')

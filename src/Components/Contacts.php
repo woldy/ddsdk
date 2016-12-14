@@ -97,7 +97,6 @@ class Contacts{
                         }
                         array_push($g[$idx % $threads],$group);
                     }
-
  
                     for($i=0;$i<$threads;$i++){
                         $f[$i]=function($p){
@@ -118,9 +117,14 @@ class Contacts{
                         $t[$i]->start();
                     }
 
-
-                    
+ 
+                    $stime=time();
+ 
                     while(count($t)>0) {
+                        if(time()-$stime>180){
+                            echo "time out";
+                            exit;
+                        }
                         for($i=0;$i<$threads;$i++){
                             if(isset($t[$i])  && !$t[$i]->runing){
                                 echo "\n------{$i}-------\n";
@@ -228,7 +232,7 @@ class Contacts{
         	        var_dump($user);
         var_dump($response->body);
             var_dump($response->body);
-            exit;
+            // exit;
         }
 
 
