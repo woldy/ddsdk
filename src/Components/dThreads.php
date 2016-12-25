@@ -9,7 +9,7 @@ class dThreads extends \Thread{
 	public $result='';
 	public $runing=true;
 	public $func='';
-	public function __construct(){
+	public function __construct($func,$param){
 		$this->func=$func;
 		$this->param=$param;
 	}
