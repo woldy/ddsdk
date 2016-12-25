@@ -80,7 +80,7 @@ class Contacts{
                 $groups=array_values($groups);
                 $percent=0;
 
-                $threads=6;
+                $threads=5;
                 global $key;
                 if($key=='woldy' && in_array('pthreads', get_loaded_extensions())){
                     $g=[];//组织架构分组
