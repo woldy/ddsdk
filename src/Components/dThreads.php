@@ -10,14 +10,14 @@ class dThreads extends \Thread{
 	public $runing=true;
 	public $func='';
 	public function __construct(){
-		// $this->func=$func;
-		// $this->param=$param;
+		$this->func=$func;
+		$this->param=$param;
 	}
 
 	public function run() {
-		echo 'ok';
-		// $func=$this->func;
-		// $this->result=$func($this->param);
-		// $this->runing=false;
+		//echo 'ok';
+		$func=$this->func;
+		$this->result=$func($this->param);
+		$this->runing=false;
 	}
 }
