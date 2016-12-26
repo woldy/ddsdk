@@ -182,7 +182,7 @@ class Token{
         		'access_token'=>$this->getAccessToken()
         	)
         );
-        if (true || !$jsticket) //傻逼钉钉的ticket缓存后总有问题，老子不缓存了。
+        if (!$jsticket) //傻逼钉钉的ticket缓存后总有问题，老子不缓存了。
         {
             $response = Request::get('https://oapi.dingtalk.com/get_jsapi_ticket?'.$param)->send();
             if ($response->hasErrors()){
