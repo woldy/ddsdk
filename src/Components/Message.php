@@ -137,7 +137,7 @@ class Message{
             if(mb_detect_encoding( $content,'UTF-8') !='UTF-8'){
                 $content=iconv('GB2312', 'UTF-8', $content);
             }
-            $data=array("content"=>$content.date("y-m-d h:I:s"));
+            $data=array("content"=>$content);
         }else if($type=='link'){
             $data=json_decode($content,true);
             $data['picUrl']=$media->media_id;           
