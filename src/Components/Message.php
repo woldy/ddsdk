@@ -23,23 +23,84 @@ class Message{
 			die('api密码错误！');
 		}else{
 			$AgentID=$config->get('dd')['AgentID'];
-			$content=base64_decode($param['content']);
+			$content=base64_decode(str_replace(" ","+",$param['content']));
             $touser=$config->get('dd')['notice'][$param['user']]['touser'];
+            $toparty=$config->get('dd')['notice'][$param['user']]['toparty'];
+
+            if(isset($param['emails']) || isset($param['dingids'])){
+                $touser='';
+            }
 
             if(isset($param['emails']) && !empty($param['emails'])){
-                $touser=[];
+                $touser2=[];
                 $emails=explode(',', $param['emails']);
                 foreach ($emails as $email) {
-                    array_push($touser, self::getUser($email));
+                    array_push($touser2, self::getUser($email));
                 }
-                $touser=implode('|',$touser);
+                $touser.="|".implode('|',$touser2);
             }
-            			                  
-			$toparty=$config->get('dd')['notice'][$param['user']]['toparty'];
-			self::sendMessage($touser,$toparty,$content,$AgentID,$ACCESS_TOKEN);
+
+
+
+            if(isset($param['dingids']) && !empty($param['dingids'])){
+                $dingids=explode(',', $param['dingids']);
+                $touser.="|".implode('|',$dingids);
+            }
+
+
+
+
+            if(isset($param['groups']) && !empty($param['groups'])){
+                $groups=explode(',', $param['groups']);
+                $toparty=implode('|',$groups);
+            }
+
+
+            if(isset($param['appid'])){
+                $AgentID=$param['appid'];
+            }
+            			         
+            if(!isset($param['type'])){
+                $type='text';
+            }else{
+                $type=$param['type'];
+            }
+
+            $media='';
+            if(isset($param['media_url']) && !empty($param['media_url'])){
+                if(strrpos($param['media_url'],'http')===false){
+                    $media='';
+                }
+                else{
+                    $media=self::upLoadFile($ACCESS_TOKEN,$param['media_url']);
+                }
+            }   
+            
+			return self::sendMessage($touser,$toparty,$content,$AgentID,$ACCESS_TOKEN,$type,$media);
 		}
  
 	}
+
+
+    public static function sendMessageByData($data){
+
+    }
+
+    public static function upLoadFile($ACCESS_TOKEN,$path='',$type='image'){
+
+        $tmppath=$_SERVER['DOCUMENT_ROOT']."/../storage/app/ding/tmp/dingup_".str_random(32).".jpg";
+        file_put_contents($tmppath,file_get_contents($path));
+        $response=Request::post('https://oapi.dingtalk.com/media/upload?access_token='.$ACCESS_TOKEN."&type={$type}")
+                    ->attach(array('media' =>$tmppath))
+                    ->sends('upload')
+                    ->send(); 
+        if($response->body->errcode!=0){
+            echo json_encode($response->body);
+            exit;
+        }
+        return $response->body; 
+    }
+
 
     public static function getUser($email){
            $result['list']=[];
@@ -69,42 +130,50 @@ class Message{
      * @param    string                   $type        [description]
      * @return   [type]                                [description]
      */
-	public static function sendMessage($touser,$toparty,$content,$AgentID,$ACCESS_TOKEN,$type='text'){
-		//$content=iconv('GB2312', 'UTF-8', $content);
-
-        //
+	public static function sendMessage($touser,$toparty,$content,$AgentID,$ACCESS_TOKEN,$type='text',$media=''){
       
-		if($type=='text'){
+
+        if($type=='text'){
             if(mb_detect_encoding( $content,'UTF-8') !='UTF-8'){
                 $content=iconv('GB2312', 'UTF-8', $content);
             }
-        	$param=array(
-        		'touser' =>$touser, 
-        		'toparty'=>$toparty,
-        		'agentid'=>$AgentID,
-        		"msgtype"=>"text",
-            	"text"=>array("content"=>$content)
-        	);
-        	//var_dump(json_encode($param));
-        	//exit;
-            $response = Request::post('https://oapi.dingtalk.com/message/send?access_token='.$ACCESS_TOKEN)
-            	->body(json_encode($param))
-            	->sends('application/json')
-            	->send();
-            if ($response->hasErrors()){
-            	var_dump($response);
-            	exit;
-        	}
+            $data=array("content"=>$content.date("y-m-d h:I:s"));
+        }else if($type=='link'){
+            $data=json_decode($content,true);
+            $data['picUrl']=$media->media_id;           
+        }else if($type=='oa'){
+            $data=json_decode($content,true);
+
+            $data['body']['image']=$media->media_id;           
+        }
+
+
+        $param=array(
+            'touser' =>$touser, 
+            'toparty'=>$toparty,
+            'agentid'=>$AgentID,
+            "msgtype"=>$type,
+            $type=>$data
+        );
+
+        $response = Request::post('https://oapi.dingtalk.com/message/send?access_token='.$ACCESS_TOKEN)
+            ->body(json_encode($param))
+            ->sends('application/json')
+            ->send();
+        if ($response->hasErrors()){
+            var_dump($response);
+            exit;
+        }
+
         if(!is_object($response->body)){
             $response->body=json_decode($response->body);
         }   
-        	if ($response->body->errcode != 0){
-            	var_dump($response->body);
-            	exit;
-        	}
- 			echo 'send ok';
+        if ($response->body->errcode != 0){
+            var_dump($response->body);
             exit;
-		}
+        }
+        return $response->body;
+
 	}
 
     /**
