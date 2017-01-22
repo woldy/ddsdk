@@ -13,7 +13,7 @@ class ddServiceProvider extends ServiceProvider
         //$this->loadViewsFrom(__DIR__.'../../views', 'woldycms');
         $this->publishes([
             //__DIR__.'../../views' => base_path('resources/views/woldycms'),
-            __DIR__.'../../config/dd.php' => config_path('dd.php'),
+            //__DIR__.'../../config/dd.php' => config_path('dd.php'),
         ]);
     }
     /**

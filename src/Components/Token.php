@@ -112,13 +112,15 @@ class Token{
                 ->sends('application/json')
                 ->send();
             if ($response->hasErrors()){
+                echo 'getPersistent';
                 var_dump($response);
                 exit;
             }
             if(!is_object($response->body)){
-            $response->body=json_decode($response->body);
-        }   
+                $response->body=json_decode($response->body);
+            }   
             if ($response->body->errcode != 0){
+                echo 'getPersistent';
                 var_dump($response->body);
                 exit;
             }
@@ -150,6 +152,7 @@ class Token{
                 ->sends('application/json')
                 ->send();
             if ($response->hasErrors()){
+                echo 'getSnsToken';
                 var_dump($response);
                 exit;
             }
@@ -182,7 +185,7 @@ class Token{
         		'access_token'=>$this->getAccessToken()
         	)
         );
-        if (!$jsticket) //傻逼钉钉的ticket缓存后总有问题，老子不缓存了。
+        if (true || !$jsticket) //傻逼钉钉的ticket缓存后总有问题，老子不缓存了。
         {
             $response = Request::get('https://oapi.dingtalk.com/get_jsapi_ticket?'.$param)->send();
             if ($response->hasErrors()){
