@@ -263,7 +263,7 @@ class Token{
             'appid'=>$appId,
             'signature' => $signature
         );
-        return json_encode($config, JSON_UNESCAPED_SLASHES);
+        return $config;
 	}
 
 }
