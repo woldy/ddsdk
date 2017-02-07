@@ -200,7 +200,7 @@ class Token{
             	exit;
         	}
             $jsticket = $response->body->ticket;
-            Cache::put('js_ticket',$jsticket,1);
+            Cache::put('js_ticket',$jsticket,60);
         }
         return $jsticket;
 		//https://oapi.dingtalk.com/get_jsapi_ticket?access_token=ACCESS_TOKE
