@@ -121,7 +121,7 @@ class Contacts{
                     $stime=time();
  
                     while(count($t)>0) {
-                        if(time()-$stime>180){
+                        if(time()-$stime>300){
                             echo "time out";
                             exit;
                         }
