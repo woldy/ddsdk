@@ -8,7 +8,9 @@ use Woldy\ddsdk\Components\Group;
 use Woldy\ddsdk\Components\Chat;
 use Woldy\ddsdk\Components\App;
 use Woldy\ddsdk\Components\Callback;
+use Woldy\ddsdk\Components\dCrypt;
 use Illuminate\Support\Facades\Input;
+use Httpful\Request;
 class dd{
 	static $config;
 	static $token;
@@ -228,7 +230,9 @@ class dd{
 		$call_back_tag=['user_add_org', 'user_modify_org', 'user_leave_org','org_admin_add', 'org_admin_remove', 'org_dept_create', 'org_dept_modify', 'org_dept_remove', 'org_remove', 'chat_add_member', 'chat_remove_member', 'chat_quit', 'chat_update_owner', 'chat_update_title', 'chat_disband', 'chat_disband_microapp'
 		]){
 		$accesstoken=self::$ACCESS_TOKEN;
-		return Callback::reg_callback($accesstoken,$url,$token,$aes_key,$call_back_tag);		
+
+
+		return Callback::reg_callback($accesstoken,$url,$crypt_token,$aes_key,$call_back_tag);		
 	}
 
 
@@ -261,4 +265,63 @@ class dd{
 		};
 		return Contacts::delUserByIds($accesstoken,$delid);	
 	}
+
+	public function proxy($api,$param){
+
+		$ACCESS_TOKEN=self::$ACCESS_TOKEN;
+
+			if($_SERVER['REQUEST_METHOD'] == 'POST'){
+				$response = Request::post("https://oapi.dingtalk.com/{$api}?access_token=".$ACCESS_TOKEN)
+	            ->body($param)
+	            ->sends('application/json','application/json')
+	            ->send();	
+
+	            var_dump($param);
+	            var_dump(json_decode(trim($param)));			
+			}else{
+				$param['access_token']=$ACCESS_TOKEN;
+				$param=http_build_query($param);
+				$response = Request::get("https://oapi.dingtalk.com/{$api}?".$param)->send();				
+			}
+		
+
+		return $response->body;
+         
+	}
+
+	public static function encrypt($signature, $timeStamp, $nonce, $string){
+		$crypt_token=self::$config->get('dd')['CryptToken'];
+		$aes_key=self::$config->get('dd')['AesKey'];
+		$CorpID=self::$config->get('dd')['CorpID'];
+		$dCrypt=new dCrypt($crypt_token,$aes_key,$CorpID);
+		
+    	$encryptMsg = "";
+    	$errCode = $dCrypt->EncryptMsg($string, $timeStamp, $nonce, $encryptMsg);
+
+    	return $encryptMsg;
+
+    	// return [
+    	// 	'errcode'=>$errCode,
+    	// 	'errmsg'=>$encryptMsg
+    	// ];
+	}
+
+	public static function decrypt($signature,$timeStamp,$nonce,$encrypt){
+		$crypt_token=self::$config->get('dd')['CryptToken'];
+		$aes_key=self::$config->get('dd')['AesKey'];
+		$CorpID=self::$config->get('dd')['CorpID'];
+		$dCrypt=new dCrypt($crypt_token,$aes_key,$CorpID);
+		// $signature = $_GET["signature"];
+		// $timeStamp = $_GET["timestamp"];
+		// $nonce = $_GET["nonce"];
+		$msg = "";
+		$errCode = $dCrypt->DecryptMsg($signature, $timeStamp, $nonce, $encrypt, $msg);
+
+		return $msg;
+		// return [
+  //   		'errcode'=>$errCode,
+  //   		'errmsg'=>$msg
+  //   	];
+	}
+
 } 
