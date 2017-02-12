@@ -235,6 +235,12 @@ class dd{
 		return Callback::reg_callback($accesstoken,$url,$crypt_token,$aes_key,$call_back_tag);		
 	}
 
+	
+	public static function fail_callback(){
+		$ACCESS_TOKEN=self::$ACCESS_TOKEN;
+        return Callback::fail_callback($ACCESS_TOKEN);
+	}
+
 
 	public static function createGroup($name,$parentid){
 		$ACCESS_TOKEN=self::$ACCESS_TOKEN;

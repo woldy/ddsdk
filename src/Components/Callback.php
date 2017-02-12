@@ -26,6 +26,25 @@ class Callback{
         return $response->body; 		
 	}
 
+	public static function fail_callback($accesstoken){
+
+            $response = Request::get('https://oapi.dingtalk.com/call_back/get_call_back_failed_result?access_token='.$accesstoken)->send();
+            if ($response->hasErrors()){
+            	var_dump($response);
+            	exit;
+        	}
+            if(!is_object($response->body)){
+                $response->body=json_decode($response->body);
+            } 
+        	if ($response->body->errcode != 0){
+             //    var_dump('https://oapi.dingtalk.com/chat/get?'.$param);
+            	// var_dump($response->body);
+            	// exit;
+        	}
+
+            return $response->body;  
+	
+	}
 	public function get(){
 
 	}
