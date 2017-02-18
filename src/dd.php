@@ -187,6 +187,11 @@ class dd{
 		return Group::getGroupUsers($groupid,$accesstoken);			
 	}
 
+	public static function getGroupInfo($groupid){
+		$accesstoken=self::$ACCESS_TOKEN;
+		return Group::getGroupInfo($groupid,$accesstoken);			
+	}
+
 	public static function getGroupById($groupid,$sub=true,$refresh=false){
 		$groupid=preg_replace('/\D/','',$groupid);
 		$accesstoken=self::$ACCESS_TOKEN;

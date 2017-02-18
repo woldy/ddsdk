@@ -344,5 +344,28 @@ class group{
             }
             return $response->body;
     }
+
+    public static function getGroupInfo($groupid,$ACCESS_TOKEN){
+            $param=http_build_query(
+                array(
+                    'access_token'=>$ACCESS_TOKEN,
+                    'id'=>$groupid
+                )
+            );
+            $response = Request::get('https://oapi.dingtalk.com/department/get?'.$param)->send();
+            if ($response->hasErrors()){
+                var_dump($response);
+                exit;
+            }
+            if(!is_object($response->body)){
+                $response->body=json_decode($response->body);
+            }   
+            if ($response->body->errcode != 0){
+                var_dump($response->body);
+                exit;
+            }
+            $result = $response->body;            
+            return  $result;
+    }
  
 }
