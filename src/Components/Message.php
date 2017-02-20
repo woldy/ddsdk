@@ -3,6 +3,7 @@ namespace Woldy\ddsdk\Components;
 use Cache;  
 use Storage;
 use Httpful\Request;
+use App\Models\DingUsersModel;
 class Message{
     /**
      * 根据加密串发送企业消息。
@@ -17,68 +18,59 @@ class Message{
 		$join=self::decode($code);
 
 		$param=json_decode($join,true);
-		if(!isset($config->get('dd')['notice'][$param['user']])){
-			die('api用户不存在！');
-		}else if($config->get('dd')['notice'][$param['user']]['password']!=$param['password']){
-			die('api密码错误！');
-		}else{
-			$AgentID=$config->get('dd')['AgentID'];
-			$content=base64_decode(str_replace(" ","+",$param['content']));
-            $touser=$config->get('dd')['notice'][$param['user']]['touser'];
-            $toparty=$config->get('dd')['notice'][$param['user']]['toparty'];
-
-            if(isset($param['emails']) || isset($param['dingids'])){
-                $touser='';
-            }
-
-            if(isset($param['emails']) && !empty($param['emails'])){
-                $touser2=[];
-                $emails=explode(',', $param['emails']);
-                foreach ($emails as $email) {
-                    array_push($touser2, self::getUser($email));
-                }
-                $touser.="|".implode('|',$touser2);
-            }
-
-
-
-            if(isset($param['dingids']) && !empty($param['dingids'])){
-                $dingids=explode(',', $param['dingids']);
-                $touser.="|".implode('|',$dingids);
-            }
-
-
-
-
-            if(isset($param['groups']) && !empty($param['groups'])){
-                $groups=explode(',', $param['groups']);
-                $toparty=implode('|',$groups);
-            }
-
-
-            if(isset($param['appid'])){
-                $AgentID=$param['appid'];
-            }
-            			         
-            if(!isset($param['type'])){
-                $type='text';
-            }else{
-                $type=$param['type'];
-            }
-
-            $media='';
-            if(isset($param['media_url']) && !empty($param['media_url'])){
-                if(strrpos($param['media_url'],'http')===false){
-                    $media='';
-                }
-                else{
-                    $media=self::upLoadFile($ACCESS_TOKEN,$param['media_url']);
-                }
-            }   
-            
-			return self::sendMessage($touser,$toparty,$content,$AgentID,$ACCESS_TOKEN,$type,$media);
-		}
+	    $AgentID=$config->get('dd')['AgentID'];
+	    $content=base64_decode(str_replace(" ","+",$param['content']));
+        $touser='';
+        $toparty=[];
  
+
+        if(isset($param['emails']) && !empty($param['emails'])){
+            $email_users=DingUsersModel::whereIn('email',explode('|',$param['emails']))->select('dingid')->get()->toArray();
+            $email_users=array_column($email_users,'dingid');
+            if(!empty($email_users)){
+                $touser=implode('|', $email_users);
+            }
+        }
+
+        if(isset($param['workcodes']) && !empty($param['workcodes'])){
+            $workcode_users=DingUsersModel::whereIn('workcode',explode('|',$param['workcodes']))->select('dingid')->get()->toArray();
+            $workcode_users=array_column($workcode_users,'dingid');
+            if(!empty($workcode_users)){
+                $touser=implode('|', $workcode_users);
+            }
+        }
+
+         if(isset($param['dingids']) && !empty($param['dingids'])){
+             $touser.="|".$param['dingids'];
+         }
+
+         if(isset($param['groups']) && !empty($param['groups'])){
+             $toparty=$param['groups'];
+         }
+
+
+         if(isset($param['appid'])){
+             $AgentID=$param['appid'];
+         }
+     			         
+         if(!isset($param['type'])){
+             $type='text';
+         }else{
+             $type=$param['type'];
+         }
+
+         $media='';
+         if(isset($param['media_url']) && !empty($param['media_url'])){
+             if(strrpos($param['media_url'],'http')===false){
+                 $media='';
+             }
+             else{
+                 $media=self::upLoadFile($ACCESS_TOKEN,$param['media_url']);
+             }
+         }   
+ 
+	   return self::sendMessage($touser,$toparty,$content,$AgentID,$ACCESS_TOKEN,$type,$media);
+
 	}
 
 
@@ -88,7 +80,7 @@ class Message{
 
     public static function upLoadFile($ACCESS_TOKEN,$path='',$type='image'){
 
-        $tmppath=$_SERVER['DOCUMENT_ROOT']."/../storage/app/ding/tmp/dingup_".str_random(32).".jpg";
+        $tmppath=$_SERVER['DOCUMENT_ROOT']."/../storage/app/tmp/dingup_".str_random(32).".jpg";
         file_put_contents($tmppath,file_get_contents($path));
         $response=Request::post('https://oapi.dingtalk.com/media/upload?access_token='.$ACCESS_TOKEN."&type={$type}")
                     ->attach(array('media' =>$tmppath))
