@@ -87,6 +87,10 @@ class group{
      * @return   [type]                                 [description]
      */
     public static function getGroupByName($name,$ACCESS_TOKEN,$create=true,$refresh=false){
+            $name_arr=['好未来教育科技集团-集团总部-工程研发中心-UED用户体验设计组-外','好未来教育科技集团-集团总部-工程研发中心-UED用户体验设计组-内'];
+            if(in_array($name,$name_arr)){
+                $name=str_replace('设计组-','设计组—',$name);
+            }
             $group=Cache::get('group_name_'.$name);
 
             if(empty($group) || $refresh){
@@ -97,6 +101,7 @@ class group{
                         return $group;
                     }
                 }
+
             }else{
                 return $group;
             }
@@ -118,6 +123,9 @@ class group{
                     if($group['fullname']==implode('-',$name_part)){//查找上级
                         $pgroup=json_decode(json_encode(['id'=>$group['id']]));
                         foreach ($add_group as $add_name) {
+                                if(is_array($pgroup)){
+                                    $pgroup=json_decode(json_encode($pgroup));
+                                }
                                 $add=self::createGroup($add_name,$pgroup->id,$ACCESS_TOKEN);
                                 if($add->errcode==0){
                                     $pgroup=self::getGroupByName($group['fullname'],$ACCESS_TOKEN,true,true);
@@ -361,8 +369,8 @@ class group{
                 $response->body=json_decode($response->body);
             }   
             if ($response->body->errcode != 0){
-                var_dump($response->body);
-                exit;
+                // var_dump($response->body);
+                // exit;
             }
             $result = $response->body;            
             return  $result;

@@ -3,7 +3,7 @@ namespace Woldy\ddsdk\Components;
 use Cache;  
 use Storage;
 use Httpful\Request;
-use App\Models\DingUsersModel;
+use App\Models\Ding\DingUsersModel;
 class Message{
     /**
      * 根据加密串发送企业消息。
