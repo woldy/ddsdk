@@ -87,10 +87,23 @@ class group{
      * @return   [type]                                 [description]
      */
     public static function getGroupByName($name,$ACCESS_TOKEN,$create=true,$refresh=false){
-            $name_arr=['好未来教育科技集团-集团总部-工程研发中心-UED用户体验设计组-外','好未来教育科技集团-集团总部-工程研发中心-UED用户体验设计组-内'];
-            if(in_array($name,$name_arr)){
-                $name=str_replace('设计组-','设计组—',$name);
+            // $name_arr=['好未来教育科技集团-集团总部-工程研发中心-UED用户体验设计组-外','好未来教育科技集团-集团总部-工程研发中心-UED用户体验设计组-内'];
+
+            $department_replace=[
+                ['智康','爱智康'],
+                [' ',''],
+                ['设计组-','设计组—'],
+                ['爱智康-爱智康总部-业务部','爱智康-爱智康总部-分校管理部'],
+            ];
+            // if(in_array($name,$name_arr)){
+            //     $name=str_replace('设计组-','设计组—',$name);
+            // }
+            // 
+            foreach ($department_replace as $x) {
+               $name=str_replace($x[0],$x[1],$name);
             }
+
+
             $group=Cache::get('group_name_'.$name);
 
             if(empty($group) || $refresh){
@@ -124,49 +137,44 @@ class group{
                     if($group['fullname']==implode('-',$name_part)){//查找上级
                         // var_dump($add_group);
                         // var_dump($name_part);
-                        $pgroup=json_decode(json_encode(['id'=>$group['id']]));//终于找到存在的一个父节点了
+                        $pgroup=['id'=>$group['id']];//终于找到存在的一个父节点了
                         foreach ($add_group as $add_name) {//挨个往里加
-                            echo "\n".'add----start'."\n";
-                            var_dump($add_group);
-                            var_dump($add_name);
-                            echo 'add----end'."\n\n";
-                                if(is_array($pgroup)){
-                                    $pgroup=json_decode(json_encode($pgroup));
-                                }
-                                $add=self::createGroup($add_name,$pgroup->id,$ACCESS_TOKEN);
+                                $add=self::createGroup($add_name,$pgroup['id'],$ACCESS_TOKEN);
+
                                 if($add->errcode==0){
-                                    $pgroup=self::getGroupByName($group['fullname'].'-'.$add_name,$ACCESS_TOKEN,true,true);
-                                    var_dump($pgroup);
-                                    echo 'add group: '.$group['fullname'].'-'. $add_name."\n";
-                                    Log::info("ding|group_add|".$group['fullname'].'-'. $add_name);
+                                    $group['fullname']= $group['fullname'].'-'.$add_name;
+                                    $pgroup=self::getGroupByName($group['fullname'],$ACCESS_TOKEN,true,true);
+                                    //var_dump($pgroup);
+                                    echo 'add group: '.$group['fullname']."\n";
+                                    Log::info("ding|group_add|".$group['fullname']);
                                   
                                 }else if($add->errcode==60008){
-                                    var_dump($add);
-                                    $pgroup=self::getGroupByName($group['fullname'].'-'.$add_name,$ACCESS_TOKEN,true,true);
+
+                                    $pgroup=self::getGroupByName($group['fullname'],$ACCESS_TOKEN,true,true);
                                  
                                 }else{
                                 
                                     echo 'can\'t  add department: ';
-                                    // var_dump($pgroup);
-                                    // var_dump($add);
-                                    // var_dump($ACCESS_TOKEN);
-                                    // //var_dump(self::getGroupById($pgroup->id,$ACCESS_TOKEN)['fullname']);
-                                    // var_dump($group['fullname'].'-'. $add_name);       
+                                    var_dump($pgroup);
+                                    var_dump($add);
+                                    var_dump($ACCESS_TOKEN);
+                                    var_dump($group['fullname'].'-'. $add_name);       
                                         
-                            }
+                                }
+                        
 
                         }
                         $pgroup=json_decode(json_encode($pgroup),true);
                         // var_dump($pgroup);
                         // exit;
+                  
                        break;
                         //return self::getGroupById($pgroup->id,$ACCESS_TOKEN,false,true);
                     }
 
                 }
             }
-             var_dump($pgroup);
-             exit;
+
              return $pgroup;
     }
 
