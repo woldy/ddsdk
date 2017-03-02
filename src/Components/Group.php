@@ -88,7 +88,8 @@ class group{
      */
     public static function getGroupByName($name,$ACCESS_TOKEN,$create=true,$refresh=false){
             // $name_arr=['好未来教育科技集团-集团总部-工程研发中心-UED用户体验设计组-外','好未来教育科技集团-集团总部-工程研发中心-UED用户体验设计组-内'];
-
+            // var_dump($name);
+            // exit;
             $department_replace=[
                 ['智康','爱智康'],
                 [' ',''],
@@ -174,6 +175,9 @@ class group{
 
                 }
             }
+
+            var_dump($name);
+            exit;
 
              return $pgroup;
     }
