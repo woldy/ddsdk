@@ -204,9 +204,10 @@ class Contacts{
         if(!is_object($response->body)){
             $response->body=json_decode($response->body);
         }   
-        if ($response->body->errcode != 0){
+        if ($response->body->errcode != 0 && $response->body->errcode != 60104){
+            // var_dump($user);
             // var_dump($response->body);
-            // exit;
+            
         }
         return $response->body;
     }
@@ -231,8 +232,8 @@ class Contacts{
         if ($response->body->errcode != 0){
         	        var_dump($user);
         var_dump($response->body);
-            var_dump($response->body);
-            // exit;
+ 
+             exit;
         }
 
 
@@ -325,7 +326,7 @@ class Contacts{
             $response->body=json_decode($response->body);
         }   
             if ($response->body->errcode != 0){
-                //return $response->body;
+                var_dump($response->body);
             }
         }
 
