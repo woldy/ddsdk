@@ -177,10 +177,7 @@ class group{
                 }
             }
 
-            var_dump($name);
-            exit;
-
-             return $pgroup;
+         return false;
     }
 
  

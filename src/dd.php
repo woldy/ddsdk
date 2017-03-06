@@ -278,17 +278,22 @@ class dd{
 	}
 
 	public function proxy($api,$param){
-
 		$ACCESS_TOKEN=self::$ACCESS_TOKEN;
-
 			if($_SERVER['REQUEST_METHOD'] == 'POST'){
-				$response = Request::post("https://oapi.dingtalk.com/{$api}?access_token=".$ACCESS_TOKEN)
-	            ->body($param)
-	            ->sends('application/json','application/json')
-	            ->send();	
-
-	            var_dump($param);
-	            var_dump(json_decode(trim($param)));			
+			    if(!empty(Input::file('media'))){
+					$file=Input::file('media');
+					path=$file -> getRealPath().'.jpg';
+					move_uploaded_file($file -> getRealPath(),$path);
+                	$response = Request::post("https://oapi.dingtalk.com/{$api}?access_token=".$ACCESS_TOKEN.'&type='.Input::get('type'))
+						->attach(array('media' =>$path))
+                 		->sends('upload')
+                    	->send(); 
+				}else{
+                	$response = Request::post("https://oapi.dingtalk.com/{$api}?access_token=".$ACCESS_TOKEN)
+               	 	->body($param)
+                	->sends('json')
+                	->send();
+				} 
 			}else{
 				$param['access_token']=$ACCESS_TOKEN;
 				$param=http_build_query($param);
