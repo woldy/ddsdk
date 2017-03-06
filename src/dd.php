@@ -282,7 +282,7 @@ class dd{
 			if($_SERVER['REQUEST_METHOD'] == 'POST'){
 			    if(!empty(Input::file('media'))){
 					$file=Input::file('media');
-					path=$file -> getRealPath().'.jpg';
+					$path=$file -> getRealPath().'.jpg';
 					move_uploaded_file($file -> getRealPath(),$path);
                 	$response = Request::post("https://oapi.dingtalk.com/{$api}?access_token=".$ACCESS_TOKEN.'&type='.Input::get('type'))
 						->attach(array('media' =>$path))
