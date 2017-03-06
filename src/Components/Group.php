@@ -152,7 +152,8 @@ class group{
                                 }else if($add->errcode==60008){
 
                                     $pgroup=self::getGroupByName($group['fullname'],$ACCESS_TOKEN,true,true);
-                                 
+                                     echo 'exists group: '.$group['fullname']."\n";
+                                    Log::info("ding|group_exists|".$group['fullname']);                                
                                 }else{
                                 
                                     echo 'can\'t  add department: ';
@@ -205,10 +206,10 @@ class group{
             }
 
             if ($response->body->errcode != 0){
-                var_dump($parentid);
-                var_dump($name);
-                var_dump($response->body);
-                exit;
+                // var_dump($parentid);
+                // var_dump($name);
+                // var_dump($response->body);
+                // exit;
             }
             return $response->body;
     }
