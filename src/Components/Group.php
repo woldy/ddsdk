@@ -173,10 +173,7 @@ class group{
                 }
             }
 
-            // var_dump( $pgroup);
-            // exit;
-
-             return $pgroup;
+ 
     }
 
  
