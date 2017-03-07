@@ -233,7 +233,7 @@ class Contacts{
         	        var_dump($user);
         var_dump($response->body);
  
-             exit;
+             // exit;
         }
 
 

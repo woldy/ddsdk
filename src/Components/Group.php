@@ -90,20 +90,15 @@ class group{
             // $name_arr=['好未来教育科技集团-集团总部-工程研发中心-UED用户体验设计组-外','好未来教育科技集团-集团总部-工程研发中心-UED用户体验设计组-内'];
             // var_dump($name);
             // exit;
-            $department_replace=[
-                ['智康','爱智康'],
-                [' ',''],
-                ['设计组-','设计组—'],
-                ['爱智康-爱智康总部-业务部','爱智康-爱智康总部-分校管理部'],
-            ];
+ 
             // if(in_array($name,$name_arr)){
             //     $name=str_replace('设计组-','设计组—',$name);
             // }
             // 
-            foreach ($department_replace as $x) {
-               $name=str_replace($x[0],$x[1],$name);
-            }
 
+            if(strpos('初中英语教师组',$name)>0){
+                var_dump(1);
+            }
 
             $group=Cache::get('group_name_'.$name);
 
@@ -150,7 +145,8 @@ class group{
                                     Log::info("ding|group_add|".$group['fullname']);
                                   
                                 }else if($add->errcode==60008){
-
+                                    //sleep(3);
+                                    $group['fullname']= $group['fullname'].'-'.$add_name;
                                     $pgroup=self::getGroupByName($group['fullname'],$ACCESS_TOKEN,true,true);
                                      echo 'exists group: '.$group['fullname']."\n";
                                     Log::info("ding|group_exists|".$group['fullname']);                                
@@ -177,8 +173,8 @@ class group{
                 }
             }
 
-            var_dump($name);
-            exit;
+            // var_dump( $pgroup);
+            // exit;
 
              return $pgroup;
     }
