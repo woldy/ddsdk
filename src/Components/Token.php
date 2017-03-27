@@ -40,10 +40,10 @@ class Token{
             if(!is_object($response->body)){
             $response->body=json_decode($response->body);
         }   
-        	if ($response->body->errcode != 0){
-            	var_dump($response->body);
-            	exit;
-        	}
+        	// if ($response->body->errcode != 0){
+         //    	var_dump($response->body);
+         //    	exit;
+        	// }
             $accessToken = $response->body->access_token;
             Cache::put('corp_access_token', $accessToken,60);
         }
@@ -79,10 +79,10 @@ class Token{
             if(!is_object($response->body)){
             $response->body=json_decode($response->body);
         }   
-            if ($response->body->errcode != 0){
-                var_dump($response->body);
-                exit;
-            }
+            // if ($response->body->errcode != 0){
+            //     var_dump($response->body);
+            //     exit;
+            // }
             $accessToken = $response->body->access_token;
             Cache::put('sns_access_token', $accessToken,60);
         }
@@ -111,19 +111,19 @@ class Token{
                 ->body($param)
                 ->sends('application/json')
                 ->send();
-            if ($response->hasErrors()){
-                echo 'getPersistent';
-                var_dump($response);
-                exit;
-            }
+            // if ($response->hasErrors()){
+            //     echo 'getPersistent';
+            //     var_dump($response);
+            //     exit;
+            // }
             if(!is_object($response->body)){
                 $response->body=json_decode($response->body);
             }   
-            if ($response->body->errcode != 0){
-                echo 'getPersistent';
-                var_dump($response->body);
-                exit;
-            }
+            // if ($response->body->errcode != 0){
+            //     echo 'getPersistent';
+            //     var_dump($response->body);
+            //     exit;
+            // }
             $persistent = $response->body;
             Cache::put('persistent_'.$code, $persistent,60);
         }
@@ -151,18 +151,18 @@ class Token{
                 ->body($param)
                 ->sends('application/json')
                 ->send();
-            if ($response->hasErrors()){
-                echo 'getSnsToken';
-                var_dump($response);
-                exit;
-            }
+            // if ($response->hasErrors()){
+            //     echo 'getSnsToken';
+            //     var_dump($response);
+            //     exit;
+            // }
             if(!is_object($response->body)){
             $response->body=json_decode($response->body);
         }   
-            if ($response->body->errcode != 0){
-                var_dump($response->body);
-                exit;
-            }
+            // if ($response->body->errcode != 0){
+            //     var_dump($response->body);
+            //     exit;
+            // }
             $snstoken = $response->body->sns_token;
             Cache::put('snstoken_'.$persistent->openid, $snstoken,60);
         }

@@ -29,8 +29,7 @@ class Contacts{
                 $response->body=json_decode($response->body);
             }   
         	if ($response->body->errcode != 0){
-            	var_dump($response->body);
-            	exit;
+            return $response->body;
         	}
             $userid = $response->body->userid;
  
