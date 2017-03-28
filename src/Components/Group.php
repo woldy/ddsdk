@@ -96,10 +96,7 @@ class group{
             // }
             // 
 
-            if(strpos('初中英语教师组',$name)>0){
-                var_dump(1);
-            }
-
+ 
             $group=Cache::get('group_name_'.$name);
 
             if(empty($group) || $refresh){
@@ -143,6 +140,9 @@ class group{
                                     //var_dump($pgroup);
                                     echo 'add group: '.$group['fullname']."\n";
                                     Log::info("ding|group_add|".$group['fullname']);
+                                    if($group['fullname']==$name){
+                                        return self::getGroupByName($group['fullname'],$ACCESS_TOKEN,true,true);
+                                    }
                                   
                                 }else if($add->errcode==60008){
                                     //sleep(3);
