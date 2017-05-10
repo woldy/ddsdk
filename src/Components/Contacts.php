@@ -3,6 +3,7 @@ namespace Woldy\ddsdk\Components;
 use Cache;
 use Httpful\Request;
 use Woldy\ddsdk\Components\dThreads;
+use Log;
 class Contacts{
     /**
      * 根据免登码获取用户信息
@@ -15,11 +16,11 @@ class Contacts{
  	public static function getUserInfoByCode($ACCESS_TOKEN,$CODE){
         	$param=http_build_query(
         		array(
-        			'code' =>$CODE, 
+        			'code' =>$CODE,
         			'access_token'=>$ACCESS_TOKEN
         		)
         	);
- 
+
             $response = Request::get('https://oapi.dingtalk.com/user/getuserinfo?'.$param)->send();
             if ($response->hasErrors()){
             	var_dump($response);
@@ -27,12 +28,12 @@ class Contacts{
         	}
             if(!is_object($response->body)){
                 $response->body=json_decode($response->body);
-            }   
+            }
         	if ($response->body->errcode != 0){
             return $response->body;
         	}
             $userid = $response->body->userid;
- 
+
         return self::getUserInfoByUid($ACCESS_TOKEN,$userid);
 	}
 
@@ -47,11 +48,11 @@ class Contacts{
 	public static function getUserInfoByUid($ACCESS_TOKEN,$uid){
         	$param=http_build_query(
         		array(
-        			'userid' =>$uid, 
+        			'userid' =>$uid,
         			'access_token'=>$ACCESS_TOKEN
         		)
         	);
- 
+
             $response = Request::get('https://oapi.dingtalk.com/user/get?'.$param)->send();
             if ($response->hasErrors()){
             	var_dump($response);
@@ -59,13 +60,12 @@ class Contacts{
         	}
             if(!is_object($response->body)){
             $response->body=json_decode($response->body);
-            }   
+            }
         	if ($response->body->errcode != 0){
-            	// var_dump($response->body);
-            	// exit;
+            Log::alert($param.json_encode($response->body));
         	}
-          
- 
+
+
         return $response->body;
 	}
 
@@ -75,7 +75,7 @@ class Contacts{
          $allusers=Cache::get('all_users');
          if(empty($allusers) || $refresh){
                 $allusers=[];
-                $groups=Group::getAllGroups($ACCESS_TOKEN,$refresh); 
+                $groups=Group::getAllGroups($ACCESS_TOKEN,$refresh);
                 $groups=array_values($groups);
                 $percent=0;
 
@@ -96,7 +96,7 @@ class Contacts{
                         }
                         array_push($g[$idx % $threads],$group);
                     }
- 
+
                     for($i=0;$i<$threads;$i++){
                         $f[$i]=function($p){
                             $partGroupUsers=[];
@@ -116,9 +116,9 @@ class Contacts{
                         $t[$i]->start();
                     }
 
- 
+
                     $stime=time();
- 
+
                     while(count($t)>0) {
                         if(time()-$stime>300){
                             echo "time out";
@@ -130,13 +130,13 @@ class Contacts{
                                     $res=json_decode($t[$i]->result,true);
                                     $allusers=array_merge($allusers,$res);
                                      echo '.';
-    
+
                                 //$t[$i]->kill();
                                 unset($t[$i]);
                             }
                         }
                     }
-             
+
                 }else{
                     foreach ($groups as $idx=>$group) {
                         if(intval($idx*100/count($groups))>$percent){
@@ -156,12 +156,12 @@ class Contacts{
                         foreach ($users as $user) {
                             array_push($allusers, json_decode(json_encode($user),true));
                         }
-                    }  
+                    }
                 }
 
 
 
-                Cache::put('all_users', $allusers,1160);  
+                Cache::put('all_users', $allusers,1160);
          }
          return $allusers;
     }
@@ -202,11 +202,11 @@ class Contacts{
         }
         if(!is_object($response->body)){
             $response->body=json_decode($response->body);
-        }   
+        }
         if ($response->body->errcode != 0 && $response->body->errcode != 60104){
             // var_dump($user);
             // var_dump($response->body);
-            
+
         }
         return $response->body;
     }
@@ -217,9 +217,9 @@ class Contacts{
             ->body(json_encode($user),'json')
             ->sends('application/json')
             ->send();
-               
- 
- 
+
+
+
         if ($response->hasErrors()){
             // var_dump($response);
             // exit;
@@ -227,11 +227,11 @@ class Contacts{
 
         if(!is_object($response->body)){
             $response->body=json_decode($response->body);
-        }   
+        }
         if ($response->body->errcode != 0){
         // 	        var_dump($user);
         // var_dump($response->body);
- 
+
 
         }
 
@@ -254,7 +254,7 @@ class Contacts{
                     'sns_token'=>$SNS_TOKEN
                 )
             );
- 
+
             $response = Request::get('https://oapi.dingtalk.com/sns/getuserinfo?'.$param)->send();
             if ($response->hasErrors()){
                 var_dump($response);
@@ -262,13 +262,13 @@ class Contacts{
             }
         if(!is_object($response->body)){
             $response->body=json_decode($response->body);
-        }   
+        }
             if ($response->body->errcode != 0){
                return $response->body;
             }
 
             $userinfo = $response->body->user_info;
- 
+
         return $userinfo;
     }
 
@@ -287,7 +287,7 @@ class Contacts{
                     'unionid'=>$unionid
                 )
             );
- 
+
             $response = Request::get('https://oapi.dingtalk.com/user/getUseridByUnionid?'.$param)->send();
             if ($response->hasErrors()){
                 var_dump($response);
@@ -295,13 +295,13 @@ class Contacts{
             }
         if(!is_object($response->body)){
             $response->body=json_decode($response->body);
-        }   
+        }
             if ($response->body->errcode != 0){
                 return $response->body;
             }
             $userid = $response->body->userid;
- 
-        return $userid;       
+
+        return $userid;
     }
 
     public static function delUserByIds($ACCESS_TOKEN,$ids){
@@ -323,7 +323,7 @@ class Contacts{
             }
         if(!is_object($response->body)){
             $response->body=json_decode($response->body);
-        }   
+        }
             if ($response->body->errcode != 0){
                 var_dump($response->body);
             }
@@ -352,12 +352,12 @@ class Contacts{
         }
         if(!is_object($response->body)){
             $response->body=json_decode($response->body);
-        }   
+        }
         if ($response->body->errcode != 0){
              var_dump($response->body);
             exit;
         }
-        return $response->body;        
+        return $response->body;
     }
 
 
