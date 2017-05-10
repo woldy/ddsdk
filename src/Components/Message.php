@@ -132,11 +132,15 @@ class Message{
             $data=array("content"=>$content);
         }else if($type=='link'){
             $data=json_decode($content,true);
-            $data['picUrl']=$media->media_id;           
+            if(!empty($media)){
+                $data['picUrl']=$media->media_id; 
+            }          
         }else if($type=='oa'){
             $data=json_decode($content,true);
-
-            $data['body']['image']=$media->media_id;           
+            if(!empty($media)){
+                $data['body']['image']=$media->media_id; 
+            }
+                      
         }
 
 
