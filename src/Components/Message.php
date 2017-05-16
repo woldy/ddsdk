@@ -26,7 +26,7 @@ class Message{
 
         if(isset($param['emails']) && !empty($param['emails'])){
             $l=array_filter(explode('|',$param['emails']));
-            $email_users=DingUsersModel::whereIn('email',$l)->select('dingid')->get()->toArray();
+            $email_users=DingUsersModel::whereIn('email',$l)->whereRaw('LENGTH(email)>3')->select('dingid')->get()->toArray();
             $email_users=array_column($email_users,'dingid');
             if(!empty($email_users)){
                 $touser=implode('|', $email_users);
@@ -34,8 +34,9 @@ class Message{
         }
 
         if(isset($param['workcodes']) && !empty($param['workcodes'])){
+
             $l=array_filter(explode('|',$param['workcodes']));
-            $workcode_users=DingUsersModel::whereIn('workcode',$l)->select('dingid')->get()->toArray();
+            $workcode_users=DingUsersModel::whereIn('workcode',$l)->whereRaw('LENGTH(workcode)>3')->select('dingid')->get()->toArray();
             $workcode_users=array_column($workcode_users,'dingid');
             if(!empty($workcode_users)){
                 $touser=implode('|', $workcode_users);
