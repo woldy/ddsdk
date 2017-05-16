@@ -1,6 +1,6 @@
 <?php
 namespace Woldy\ddsdk\Components;
-use Cache;  
+use Cache;
 use Storage;
 use Httpful\Request;
 use App\Models\Ding\DingUsersModel;
@@ -22,10 +22,11 @@ class Message{
 	    $content=base64_decode(str_replace(" ","+",$param['content']));
         $touser='';
         $toparty=[];
- 
+
 
         if(isset($param['emails']) && !empty($param['emails'])){
-            $email_users=DingUsersModel::whereIn('email',explode('|',$param['emails']))->select('dingid')->get()->toArray();
+            $l=array_filter(explode('|',$param['emails']));
+            $email_users=DingUsersModel::whereIn('email',$l)->select('dingid')->get()->toArray();
             $email_users=array_column($email_users,'dingid');
             if(!empty($email_users)){
                 $touser=implode('|', $email_users);
@@ -33,7 +34,8 @@ class Message{
         }
 
         if(isset($param['workcodes']) && !empty($param['workcodes'])){
-            $workcode_users=DingUsersModel::whereIn('workcode',explode('|',$param['workcodes']))->select('dingid')->get()->toArray();
+            $l=array_filter(explode('|',$param['workcodes']));
+            $workcode_users=DingUsersModel::whereIn('workcode',$l)->select('dingid')->get()->toArray();
             $workcode_users=array_column($workcode_users,'dingid');
             if(!empty($workcode_users)){
                 $touser=implode('|', $workcode_users);
@@ -52,7 +54,7 @@ class Message{
          if(isset($param['appid'])){
              $AgentID=$param['appid'];
          }
-     			         
+
          if(!isset($param['type'])){
              $type='text';
          }else{
@@ -67,8 +69,8 @@ class Message{
              else{
                  $media=self::upLoadFile($ACCESS_TOKEN,$param['media_url']);
              }
-         }   
- 
+         }
+
 	   return self::sendMessage($touser,$toparty,$content,$AgentID,$ACCESS_TOKEN,$type,$media);
 
 	}
@@ -85,12 +87,12 @@ class Message{
         $response=Request::post('https://oapi.dingtalk.com/media/upload?access_token='.$ACCESS_TOKEN."&type={$type}")
                     ->attach(array('media' =>$tmppath))
                     ->sends('upload')
-                    ->send(); 
+                    ->send();
         if($response->body->errcode!=0){
             echo json_encode($response->body);
             exit;
         }
-        return $response->body; 
+        return $response->body;
     }
 
 
@@ -123,7 +125,7 @@ class Message{
      * @return   [type]                                [description]
      */
 	public static function sendMessage($touser,$toparty,$content,$AgentID,$ACCESS_TOKEN,$type='text',$media=''){
-      
+
 
         if($type=='text'){
             if(mb_detect_encoding( $content,'UTF-8') !='UTF-8'){
@@ -133,19 +135,19 @@ class Message{
         }else if($type=='link'){
             $data=json_decode($content,true);
             if(!empty($media)){
-                $data['picUrl']=$media->media_id; 
-            }          
+                $data['picUrl']=$media->media_id;
+            }
         }else if($type=='oa'){
             $data=json_decode($content,true);
             if(!empty($media)){
-                $data['body']['image']=$media->media_id; 
+                $data['body']['image']=$media->media_id;
             }
-                      
+
         }
 
 
         $param=array(
-            'touser' =>$touser, 
+            'touser' =>$touser,
             'toparty'=>$toparty,
             'agentid'=>$AgentID,
             "msgtype"=>$type,
@@ -163,7 +165,7 @@ class Message{
 
         if(!is_object($response->body)){
             $response->body=json_decode($response->body);
-        }   
+        }
         if ($response->body->errcode != 0){
             var_dump($response->body);
             exit;
