@@ -88,7 +88,8 @@ class Message{
         }else{
             $tmppath=$_SERVER['DOCUMENT_ROOT']."/../storage/app/tmp/dingup_".str_random(32).".jpg";
         }
-        
+
+	//echo $path;        
 
         file_put_contents($tmppath,file_get_contents($path));
         $response=Request::post('https://oapi.dingtalk.com/media/upload?access_token='.$ACCESS_TOKEN."&type={$type}")
@@ -97,7 +98,6 @@ class Message{
                     ->send();
         if($response->body->errcode!=0){
             echo json_encode($response->body);
-            exit;
         }
         return $response->body;
     }
@@ -166,16 +166,12 @@ class Message{
             ->sends('application/json')
             ->send();
         if ($response->hasErrors()){
-            var_dump($response);
-            exit;
         }
 
         if(!is_object($response->body)){
             $response->body=json_decode($response->body);
         }
         if ($response->body->errcode != 0){
-            var_dump($response->body);
-            exit;
         }
         return $response->body;
 
