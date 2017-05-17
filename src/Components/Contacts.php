@@ -3,6 +3,7 @@ namespace Woldy\ddsdk\Components;
 use Cache;
 use Httpful\Request;
 use Woldy\ddsdk\Components\dThreads;
+use Httpful\Exception\ConnectionErrorException;
 use Log;
 class Contacts{
     /**
@@ -152,7 +153,12 @@ class Contacts{
                             }
                         }
 
-                        $users=Group::getGroupUsers($group['id'],$ACCESS_TOKEN,$refresh);
+                        try{
+                            $users=Group::getGroupUsers($group['id'],$ACCESS_TOKEN,$refresh);
+                        } catch (\Httpful\Exception\ConnectionErrorException $e) {
+                            $users=Group::getGroupUsers($group['id'],$ACCESS_TOKEN,$refresh);
+                        }
+                        
                         foreach ($users as $user) {
                             array_push($allusers, json_decode(json_encode($user),true));
                         }
@@ -161,7 +167,7 @@ class Contacts{
 
 
 
-                Cache::put('all_users', $allusers,1160);
+                Cache::put('all_users', $allusers,10);
          }
          return $allusers;
     }

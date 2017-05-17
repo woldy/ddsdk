@@ -10,6 +10,7 @@ use Woldy\ddsdk\Components\App;
 use Woldy\ddsdk\Components\Callback;
 use Woldy\ddsdk\Components\dCrypt;
 use Illuminate\Support\Facades\Input;
+use Httpful\Exception\ConnectionErrorException;
 use Httpful\Request;
 class dd{
 	static $config;
@@ -59,7 +60,11 @@ class dd{
 	 * @return   [type]                   [description]
 	 */
 	public static function getUserInfoByCode($authcode){
-		return Contacts::getUserInfoByCode(self::$ACCESS_TOKEN,$authcode);
+		try{
+			return Contacts::getUserInfoByCode(self::$ACCESS_TOKEN,$authcode);
+		}catch(Httpful\Exception\ConnectionErrorException $e){
+            return Contacts::getUserInfoByCode(self::$ACCESS_TOKEN,$authcode);
+        }		
 	}
 
 	/**
@@ -69,7 +74,11 @@ class dd{
 	 * @return   [type]                   [description]
 	 */
 	public static function getUserInfoByUid($uid){
-		return Contacts::getUserInfoByUid(self::$ACCESS_TOKEN,$uid);
+		try{
+			return Contacts::getUserInfoByUid(self::$ACCESS_TOKEN,$uid);
+		}catch(Httpful\Exception\ConnectionErrorException $e){
+            return Contacts::getUserInfoByUid(self::$ACCESS_TOKEN,$uid);
+        }
 	}
 
 	/**
@@ -81,7 +90,11 @@ class dd{
 	 * @return   [type]                            [description]
 	 */
 	public static function sendMessage($touser,$toparty,$content,$type='text'){
-		return Message::sendMessage($touser,$toparty,$content,self::$config,self::$ACCESS_TOKEN,$type='text');
+		try{
+			return Message::sendMessage($touser,$toparty,$content,self::$config,self::$ACCESS_TOKEN,$type='text');
+		}catch(Httpful\Exception\ConnectionErrorException $e){
+            return Message::sendMessage($touser,$toparty,$content,self::$config,self::$ACCESS_TOKEN,$type='text');
+        }		
 	}
 
 	/**
@@ -95,8 +108,14 @@ class dd{
 		if(empty($code)){
 			$code=Input::get('code');
 		}
-		//echo $code;
-		return Message::sendMessageByCode(self::$ACCESS_TOKEN,self::$config,$code);
+
+
+		try{
+			return Message::sendMessageByCode(self::$ACCESS_TOKEN,self::$config,$code);
+		}catch(Httpful\Exception\ConnectionErrorException $e){
+           return Message::sendMessageByCode(self::$ACCESS_TOKEN,self::$config,$code);
+        }	
+		
 	}
 
 
@@ -111,15 +130,35 @@ class dd{
 		$accesstoken=self::$token->getSnsAccessToken();
 		$persistent=self::$token->getPersistent($accesstoken,$code);
 		$snscode=self::$token->getSnsToken($accesstoken,$persistent);
-		$userinfo=Contacts::getUserInfoBySns($snscode);
-		$userid=Contacts::getUserIdByUnionId(self::$ACCESS_TOKEN,$userinfo->unionid);
-		$userinfo=Contacts::getUserInfoByUid(self::$ACCESS_TOKEN,$userid);
+		try{
+			$userinfo=Contacts::getUserInfoBySns($snscode);
+		}catch(Httpful\Exception\ConnectionErrorException $e){
+           $userinfo=Contacts::getUserInfoBySns($snscode);
+        }	
+		
+		try{
+			$userid=Contacts::getUserIdByUnionId(self::$ACCESS_TOKEN,$userinfo->unionid);
+		}catch(Httpful\Exception\ConnectionErrorException $e){
+           $userid=Contacts::getUserIdByUnionId(self::$ACCESS_TOKEN,$userinfo->unionid);
+        }	
+		
+		try{
+			$userinfo=Contacts::getUserInfoByUid(self::$ACCESS_TOKEN,$userid);
+		}catch(Httpful\Exception\ConnectionErrorException $e){
+           $userinfo=Contacts::getUserInfoByUid(self::$ACCESS_TOKEN,$userid);
+        }	
+		
 		return $userinfo;
 	}
 
 
 	public static function getUserIdByUnionId($unionid){
-		return Contacts::getUserIdByUnionId(self::$ACCESS_TOKEN,$unionid);
+		try{
+			return Contacts::getUserIdByUnionId(self::$ACCESS_TOKEN,$unionid);
+		}catch(Httpful\Exception\ConnectionErrorException $e){
+           return Contacts::getUserIdByUnionId(self::$ACCESS_TOKEN,$unionid);
+        }	
+		
 
 	}
 
@@ -133,7 +172,13 @@ class dd{
 	 */
 	public static function delUser($ids){
 		$accesstoken=self::$ACCESS_TOKEN;
-		return Contacts::delUserByIds($accesstoken,$ids);
+		
+
+		try{
+			return Contacts::delUserByIds($accesstoken,$ids);
+		}catch(Httpful\Exception\ConnectionErrorException $e){
+           return Contacts::delUserByIds($accesstoken,$ids);
+        }	
 	}
 
 	/**
@@ -144,12 +189,22 @@ class dd{
 	 */
 	public static function addUser($user){
 		$accesstoken=self::$ACCESS_TOKEN;
-		return Contacts::addUser($accesstoken,$user);
+		try{
+			return Contacts::addUser($accesstoken,$user);
+		}catch(Httpful\Exception\ConnectionErrorException $e){
+           return Contacts::addUser($accesstoken,$user);
+        }	
+		
 	}
 
 	public static function updateUser($user){
 		$accesstoken=self::$ACCESS_TOKEN;
-		return Contacts::updateUser($accesstoken,$user);
+		try{
+			return Contacts::updateUser($accesstoken,$user);
+		}catch(Httpful\Exception\ConnectionErrorException $e){
+           return Contacts::updateUser($accesstoken,$user);
+        }	
+		
 	}
 
 	public static function createChat($user_ids,$chat_title){
@@ -179,54 +234,104 @@ class dd{
 
 	public static function getAllUsers($refresh=false,$extPart=''){
 		$accesstoken=self::$ACCESS_TOKEN;
-		return Contacts::getAllUsers($accesstoken,$refresh,$extPart);			
+		try{
+			return Contacts::getAllUsers($accesstoken,$refresh,$extPart);
+		}catch(Httpful\Exception\ConnectionErrorException $e){
+           return Contacts::getAllUsers($accesstoken,$refresh,$extPart);
+        }	
+					
 	}
 
 	public static function getGroupUsers($groupid){
 		$accesstoken=self::$ACCESS_TOKEN;
-		return Group::getGroupUsers($groupid,$accesstoken);			
+		try{
+			return Group::getGroupUsers($groupid,$accesstoken);	
+		}catch(Httpful\Exception\ConnectionErrorException $e){
+           return Group::getGroupUsers($groupid,$accesstoken);	
+        }	
+				
 	}
 
 	public static function getGroupInfo($groupid){
 		$accesstoken=self::$ACCESS_TOKEN;
-		return Group::getGroupInfo($groupid,$accesstoken);			
+		try{
+			return Group::getGroupInfo($groupid,$accesstoken);
+		}catch(Httpful\Exception\ConnectionErrorException $e){
+           return Group::getGroupInfo($groupid,$accesstoken);
+        }	
+					
 	}
 
 	public static function getGroupById($groupid,$sub=true,$refresh=false){
 		$groupid=preg_replace('/\D/','',$groupid);
 		$accesstoken=self::$ACCESS_TOKEN;
-		return Group::getGroupById($groupid,$accesstoken,$sub,$refresh);	
+		try{
+			return Group::getGroupById($groupid,$accesstoken,$sub,$refresh);	
+		}catch(Httpful\Exception\ConnectionErrorException $e){
+           return Group::getGroupById($groupid,$accesstoken,$sub,$refresh);	
+        }	
+		
 	}
 
 	public static function getSubGroups($groupid,$deep,$refresh=false){
 		$accesstoken=self::$ACCESS_TOKEN;
-		return Group::getSubGroups($groupid,$accesstoken,$deep,$refresh);	
+		try{
+			return Group::getSubGroups($groupid,$accesstoken,$deep,$refresh);	
+		}catch(Httpful\Exception\ConnectionErrorException $e){
+           return Group::getSubGroups($groupid,$accesstoken,$deep,$refresh);	
+        }	
+		
 	}
 
 	public static function updateGroup($group){
 		$accesstoken=self::$ACCESS_TOKEN;
-		return Group::updateGroup($group,$accesstoken);	
+		try{
+			return Group::updateGroup($group,$accesstoken);	
+		}catch(Httpful\Exception\ConnectionErrorException $e){
+           return Group::updateGroup($group,$accesstoken);	
+        }	
+		
 	}
 
 	public static function delGroup($groupid){
 		$accesstoken=self::$ACCESS_TOKEN;
-		return Group::delGroup($groupid,$accesstoken);	
+		try{
+			return Group::delGroup($groupid,$accesstoken);	
+		}catch(Httpful\Exception\ConnectionErrorException $e){
+           return Group::delGroup($groupid,$accesstoken);	
+        }	
+		
 	}
 
 
 	public static function getApp($agentId){
 		$accesstoken=self::$ACCESS_TOKEN;
-		return App::getApp($accesstoken,$agentId);		
+		try{
+			return App::getApp($accesstoken,$agentId);		
+		}catch(Httpful\Exception\ConnectionErrorException $e){
+           return App::getApp($accesstoken,$agentId);		
+        }	
+		
 	}
 
 	public static function setApp($app){
 		$accesstoken=self::$ACCESS_TOKEN;
-		return App::setApp($accesstoken,$app);		
+		try{
+			return App::setApp($accesstoken,$app);		
+		}catch(Httpful\Exception\ConnectionErrorException $e){
+           return App::setApp($accesstoken,$app);		
+        }	
+		
 	}
 
 	public static function getGroupByName($groupName,$create=true,$refresh=false){
 		$accesstoken=self::$ACCESS_TOKEN;
-		return Group::getGroupByName($groupName,$accesstoken,$create,$refresh);			
+		try{
+			return Group::getGroupByName($groupName,$accesstoken,$create,$refresh);			
+		}catch(Httpful\Exception\ConnectionErrorException $e){
+           return Group::getGroupByName($groupName,$accesstoken,$create,$refresh);			
+        }	
+		
 	}	
 
 
@@ -243,13 +348,23 @@ class dd{
 	
 	public static function fail_callback(){
 		$ACCESS_TOKEN=self::$ACCESS_TOKEN;
-        return Callback::fail_callback($ACCESS_TOKEN);
+		try{
+			 return Callback::fail_callback($ACCESS_TOKEN);
+		}catch(Httpful\Exception\ConnectionErrorException $e){
+            return Callback::fail_callback($ACCESS_TOKEN);
+        }	
+       
 	}
 
 
 	public static function createGroup($name,$parentid){
 		$ACCESS_TOKEN=self::$ACCESS_TOKEN;
-		return Group::createGroup($name,$parentid,$ACCESS_TOKEN);
+		try{
+			return Group::createGroup($name,$parentid,$ACCESS_TOKEN);
+		}catch(Httpful\Exception\ConnectionErrorException $e){
+           return Group::createGroup($name,$parentid,$ACCESS_TOKEN);
+        }	
+		
 	}
 
 	/**
@@ -284,20 +399,41 @@ class dd{
 					$file=Input::file('media');
 					$path=$file -> getRealPath().'.jpg';
 					move_uploaded_file($file -> getRealPath(),$path);
-                	$response = Request::post("https://oapi.dingtalk.com/{$api}?access_token=".$ACCESS_TOKEN.'&type='.Input::get('type'))
-						->attach(array('media' =>$path))
-                 		->sends('upload')
-                    	->send(); 
+					try{
+	                	$response = Request::post("https://oapi.dingtalk.com/{$api}?access_token=".$ACCESS_TOKEN.'&type='.Input::get('type'))
+							->attach(array('media' =>$path))
+	                 		->sends('upload')
+	                    	->send(); 			
+					}catch(Httpful\Exception\ConnectionErrorException $e){
+	                	$response = Request::post("https://oapi.dingtalk.com/{$api}?access_token=".$ACCESS_TOKEN.'&type='.Input::get('type'))
+							->attach(array('media' =>$path))
+	                 		->sends('upload')
+	                    	->send();            
+	        		}	
+
 				}else{
-                	$response = Request::post("https://oapi.dingtalk.com/{$api}?access_token=".$ACCESS_TOKEN)
-               	 	->body($param)
-                	->sends('json')
-                	->send();
+					try{
+				        $response = Request::post("https://oapi.dingtalk.com/{$api}?access_token=".$ACCESS_TOKEN)
+		               	->body($param)
+		                ->sends('json')
+		                ->send();
+					}catch(Httpful\Exception\ConnectionErrorException $e){
+                        $response = Request::post("https://oapi.dingtalk.com/{$api}?access_token=".$ACCESS_TOKEN)
+		               	->body($param)
+		                ->sends('json')
+		                ->send();
+        			}	
+
 				} 
 			}else{
 				$param['access_token']=$ACCESS_TOKEN;
 				$param=http_build_query($param);
-				$response = Request::get("https://oapi.dingtalk.com/{$api}?".$param)->send();				
+				try{
+					$response = Request::get("https://oapi.dingtalk.com/{$api}?".$param)->send();
+				}catch(Httpful\Exception\ConnectionErrorException $e){
+           			$response = Request::get("https://oapi.dingtalk.com/{$api}?".$param)->send();
+       			}	
+								
 			}
 		
 
