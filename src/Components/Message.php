@@ -83,8 +83,8 @@ class Message{
 
     public static function upLoadFile($ACCESS_TOKEN,$path='',$type='image'){
 
-        if(!isset($_SERVER['DOCUMENT_ROOT'])){
-             $tmppath="/home/wwwroot/api.service.100tal.com/storage/app/tmp/dingup_".str_random(32).".jpg";
+        if(!isset($_SERVER['DOCUMENT_ROOT']) || empty($_SERVER['DOCUMENT_ROOT'])){
+            $tmppath="/home/wwwroot/api.service.100tal.com/storage/app/tmp/dingup_".str_random(32).".jpg";
         }else{
             $tmppath=$_SERVER['DOCUMENT_ROOT']."/../storage/app/tmp/dingup_".str_random(32).".jpg";
         }
