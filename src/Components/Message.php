@@ -84,6 +84,9 @@ class Message{
     public static function upLoadFile($ACCESS_TOKEN,$path='',$type='image'){
 
         $tmppath=$_SERVER['DOCUMENT_ROOT']."/../storage/app/tmp/dingup_".str_random(32).".jpg";
+        if(!file_exists($tmppath)){
+            $tmppath="./storage/app/tmp/dingup_".str_random(32).".jpg";
+        }
         file_put_contents($tmppath,file_get_contents($path));
         $response=Request::post('https://oapi.dingtalk.com/media/upload?access_token='.$ACCESS_TOKEN."&type={$type}")
                     ->attach(array('media' =>$tmppath))
