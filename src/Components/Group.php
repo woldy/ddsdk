@@ -308,7 +308,7 @@ class group{
             if ($response->body->errcode != 0){
                 var_dump('https://oapi.dingtalk.com/user/list?'.$param);
                 var_dump($response->body);
-                //exit;
+                return $response->body;
             }
             $groupusers = $response->body->userlist;
             Cache::put('group_users_'.$groupid,$groupusers,3000);
