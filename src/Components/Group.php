@@ -37,7 +37,7 @@ class group{
                     var_dump($response->body);
                     exit;
                 }
-                $allgroups = $response->body->department;  
+                $allgroups = $response->body->department;
                 $groups=[];
                 foreach ($allgroups as $group) {
                     $groups[$group->id]=json_decode(json_encode($group),true);
@@ -66,8 +66,8 @@ class group{
                     }
                 }
                 $allgroups=$groups;
-                Cache::put('all_groups', $groups,200);  
-                            
+                Cache::put('all_groups', $groups,200);
+
             }
 
             return  $allgroups;
@@ -78,7 +78,7 @@ class group{
 
 
     /**
-     *  
+     *
      * @Author   根据部门名称获取id
      * @DateTime 2016-09-02T10:35:19+0800
      * @param    [type]                   $groupname    [description]
@@ -90,13 +90,13 @@ class group{
             // $name_arr=['好未来教育科技集团-集团总部-工程研发中心-UED用户体验设计组-外','好未来教育科技集团-集团总部-工程研发中心-UED用户体验设计组-内'];
             // var_dump($name);
             // exit;
- 
+
             // if(in_array($name,$name_arr)){
             //     $name=str_replace('设计组-','设计组—',$name);
             // }
-            // 
+            //
 
- 
+
             $group=Cache::get('group_name_'.$name);
 
             if(empty($group) || $refresh){
@@ -115,10 +115,10 @@ class group{
             if (!$create) {
                 return false;
             }
-       
+
             $name_part=explode('-',$name);
 
- 
+
 
 
             $add_group=[];
@@ -143,29 +143,29 @@ class group{
                                     if($group['fullname']==$name){
                                         return self::getGroupByName($group['fullname'],$ACCESS_TOKEN,true,true);
                                     }
-                                  
+
                                 }else if($add->errcode==60008){
                                     //sleep(3);
                                     $group['fullname']= $group['fullname'].'-'.$add_name;
                                     $pgroup=self::getGroupByName($group['fullname'],$ACCESS_TOKEN,true,true);
                                      echo 'exists group: '.$group['fullname']."\n";
-                                    Log::info("ding|group_exists|".$group['fullname']);                                
+                                    Log::info("ding|group_exists|".$group['fullname']);
                                 }else{
-                                
+
                                     echo 'can\'t  add department: ';
                                     var_dump($pgroup);
                                     var_dump($add);
                                     var_dump($ACCESS_TOKEN);
-                                    var_dump($group['fullname'].'-'. $add_name);       
-                                        
+                                    var_dump($group['fullname'].'-'. $add_name);
+
                                 }
-                        
+
 
                         }
                         $pgroup=json_decode(json_encode($pgroup),true);
                         // var_dump($pgroup);
                         // exit;
-                  
+
                        break;
                         //return self::getGroupById($pgroup->id,$ACCESS_TOKEN,false,true);
                     }
@@ -173,17 +173,17 @@ class group{
                 }
             }
 
- 
+
     }
 
- 
+
     public static function createGroup($name,$parentid,$ACCESS_TOKEN){
             $param=array(
-                'access_token' =>$ACCESS_TOKEN, 
+                'access_token' =>$ACCESS_TOKEN,
                 'name'=>$name,
                 'parentid'=>$parentid,
             );
- 
+
             $response = Request::post('https://oapi.dingtalk.com/department/create?access_token='.$ACCESS_TOKEN)
             ->body(json_encode($param),'json')
             ->sends('application/json')
@@ -237,7 +237,7 @@ class group{
                 $group['sub_groups']=self::getSubGroups($groupid,$ACCESS_TOKEN,1,$refresh);
             }
 
-            Cache::put('group_'.$groupid, $group,300);  
+            Cache::put('group_'.$groupid, $group,300);
         }
 
         return $group;
@@ -259,14 +259,14 @@ class group{
         foreach ($groups as $group) {
             if(in_array($groupid, $group['parent_ids'])){    //groupid在subgroup的parentid(1,aaa,bbb,ccc,parentid,eee,fff,subid)中
                 if($deep==0){//全部子部门
-                   array_push($subgroups,$group);   
+                   array_push($subgroups,$group);
                 }else{//指定深度内
-                    if(count($group['parent_ids'])>$deep){ 
+                    if(count($group['parent_ids'])>$deep){
                         if($group['parent_ids'][count($group['parent_ids'])-$deep-1]==$groupid){
                             $gidx=array_search($groupid,$group['parent_ids']);
                             $sidx=array_search($group['id'],$group['parent_ids']);
                             if($sidx-$gidx<=$deep){
-                                array_push($subgroups,$group); 
+                                array_push($subgroups,$group);
                             }
                         }
                     }
@@ -274,12 +274,12 @@ class group{
             }
 
         }
- 
+
         return $subgroups;
     }
-    
 
- 
+
+
     public static function getGroupUsers($groupid,$ACCESS_TOKEN,$refresh=false){
         $groupusers=Cache::get('group_users_'.$groupid);
         if(empty($groupusers) || $refresh){
@@ -301,9 +301,9 @@ class group{
             }
 
             if(!isset($response->body->errcode)){
-                $response->body=json_decode($response->body);         
+                $response->body=json_decode($response->body);
             }
- 
+
 
             if ($response->body->errcode != 0){
                 var_dump('https://oapi.dingtalk.com/user/list?'.$param);
@@ -311,10 +311,10 @@ class group{
                 exit;
             }
             $groupusers = $response->body->userlist;
-            Cache::put('group_users_'.$groupid,$groupusers,3000);  
+            Cache::put('group_users_'.$groupid,$groupusers,3000);
         }else{
             //echo 'x';
-        }            
+        }
         return  $groupusers;
     }
 
@@ -327,17 +327,17 @@ class group{
             );
             $response = Request::get('https://oapi.dingtalk.com/department/delete?'.$param)->send();
             if ($response->hasErrors()){
-                var_dump($response);
-                exit;
+                // var_dump($response);
+                // exit;
             }
         if(!is_object($response->body)){
             $response->body=json_decode($response->body);
-        }   
+        }
             if ($response->body->errcode != 0){
-                var_dump($response->body);
-                exit;
+                // var_dump($response->body);
+                // exit;
             }
-            $result = $response->body;            
+            $result = $response->body;
             return  $result;
     }
 
@@ -362,7 +362,7 @@ class group{
             }
         if(!is_object($response->body)){
             $response->body=json_decode($response->body);
-        }   
+        }
             if ($response->body->errcode != 0){
                 //echo $group['id'].',';
                 var_dump($group);
@@ -386,13 +386,13 @@ class group{
             }
             if(!is_object($response->body)){
                 $response->body=json_decode($response->body);
-            }   
+            }
             if ($response->body->errcode != 0){
                 // var_dump($response->body);
                 // exit;
             }
-            $result = $response->body;            
+            $result = $response->body;
             return  $result;
     }
- 
+
 }
