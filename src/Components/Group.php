@@ -21,7 +21,7 @@ class group{
                         'access_token'=>$ACCESS_TOKEN
                     )
                 );
-                $response = Request::get('https://oapi.dingtalk.com/department/list?'.$param)->send();
+                $response = Request::get('https://oapi.dingtalk.com/department/list?'.$param)->TimeoutIn(10)->send();
 
 
                 if ($response->hasErrors()){
@@ -185,6 +185,7 @@ class group{
             );
 
             $response = Request::post('https://oapi.dingtalk.com/department/create?access_token='.$ACCESS_TOKEN)
+            ->TimeoutIn(10)
             ->body(json_encode($param),'json')
             ->sends('application/json')
             ->send();
@@ -291,7 +292,7 @@ class group{
             );
             // echo 'x';
             // echo "\nhttps://oapi.dingtalk.com/user/list?".$param;
-            $response = Request::get('https://oapi.dingtalk.com/user/list?'.$param)->send();
+            $response = Request::get('https://oapi.dingtalk.com/user/list?'.$param)->TimeoutIn(10)->send();
 
             // echo 'o';
             if ($response->hasErrors()){
@@ -325,7 +326,7 @@ class group{
                     'id'=>$groupid
                 )
             );
-            $response = Request::get('https://oapi.dingtalk.com/department/delete?'.$param)->send();
+            $response = Request::get('https://oapi.dingtalk.com/department/delete?'.$param)->TimeoutIn(10)->send();
             if ($response->hasErrors()){
                 // var_dump($response);
                 // exit;
@@ -351,6 +352,7 @@ class group{
      */
     public static function updateGroup($group,$ACCESS_TOKEN){
             $response = Request::post('https://oapi.dingtalk.com/department/update?access_token='.$ACCESS_TOKEN)
+                ->TimeoutIn(10)
                 ->body(json_encode($group))
                 ->sends('application/json')
                 ->send();
@@ -379,7 +381,7 @@ class group{
                     'id'=>$groupid
                 )
             );
-            $response = Request::get('https://oapi.dingtalk.com/department/get?'.$param)->send();
+            $response = Request::get('https://oapi.dingtalk.com/department/get?'.$param)->TimeoutIn(10)->send();
             if ($response->hasErrors()){
                 var_dump($response);
                 exit;

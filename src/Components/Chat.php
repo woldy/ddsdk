@@ -11,21 +11,21 @@ class Chat{
         	   )
             );
 
-            $response = Request::get('https://oapi.dingtalk.com/chat/get?'.$param)->send();
+            $response = Request::get('https://oapi.dingtalk.com/chat/get?'.$param)->TimeoutIn(10)->send();
             if ($response->hasErrors()){
             	var_dump($response);
             	exit;
         	}
             if(!is_object($response->body)){
                 $response->body=json_decode($response->body);
-            } 
+            }
         	if ($response->body->errcode != 0){
              //    var_dump('https://oapi.dingtalk.com/chat/get?'.$param);
             	// var_dump($response->body);
             	// exit;
         	}
 
-            return $response->body;        
+          return $response->body;
 	}
 
 
@@ -45,6 +45,7 @@ class Chat{
             "add_useridlist"=>$ids
         ];
         $response = Request::post('https://oapi.dingtalk.com/chat/update?access_token='.$ACCESS_TOKEN)
+						->TimeoutIn(10)
             ->body(json_encode($param))
             ->sends('application/json')
             ->send();
@@ -54,12 +55,12 @@ class Chat{
         }
         if(!is_object($response->body)){
             $response->body=json_decode($response->body);
-        }   
+        }
         // if ($response->body->errcode != 0){
         //      var_dump($response->body);
         //     exit;
         // }
-        return $response->body; 
+        return $response->body;
 
     }
 
@@ -73,7 +74,7 @@ class Chat{
             "useridlist"=>$ids
         ];
 
-        var_dump($param);
+        //var_dump($param);
         $response = Request::post('https://oapi.dingtalk.com/chat/create?access_token='.$ACCESS_TOKEN)
             ->body(json_encode($param))
             ->sends('application/json')
@@ -84,11 +85,11 @@ class Chat{
         }
         if(!is_object($response->body)){
             $response->body=json_decode($response->body);
-        }   
+        }
         // if ($response->body->errcode != 0){
         //      var_dump($response->body);
         //     exit;
         // }
-        return $response->body;           
+        return $response->body;
     }
 }

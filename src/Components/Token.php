@@ -15,8 +15,8 @@ class Token{
  		$this->CorpID=$config->get('dd')['CorpID'];
  		$this->CorpSecret=$config->get('dd')['CorpSecret'];
  		$this->SSOSecret=$config->get('dd')['SSOSecret'];
-        $this->AppID=$config->get('dd')['APPID'];
-        $this->APPSECRET=$config->get('dd')['APPSECRET'];
+    $this->AppID=$config->get('dd')['APPID'];
+    $this->APPSECRET=$config->get('dd')['APPSECRET'];
 	}
 
 	public function getAccessToken(){
@@ -26,20 +26,20 @@ class Token{
         $accessToken = Cache::get('corp_access_token');
         $param=http_build_query(
         	array(
-        		'corpid' =>$this->CorpID, 
+        		'corpid' =>$this->CorpID,
         		'corpsecret'=>$this->CorpSecret
         	)
         );
         if (!$accessToken){
         	//die('https://oapi.dingtalk.com/gettoken?'.$param);
-            $response = Request::get('https://oapi.dingtalk.com/gettoken?'.$param)->send();
+            $response = Request::get('https://oapi.dingtalk.com/gettoken?'.$param)->TimeoutIn(10)->send();
         	if ($response->hasErrors()){
             	var_dump($response);
             	exit;
         	}
             if(!is_object($response->body)){
             $response->body=json_decode($response->body);
-        }   
+        }
         	// if ($response->body->errcode != 0){
          //    	var_dump($response->body);
          //    	exit;
@@ -65,20 +65,21 @@ class Token{
 
         $param=http_build_query(
             array(
-                'appid' =>$this->AppID, 
+                'appid' =>$this->AppID,
                 'appsecret'=>$this->APPSECRET
             )
         );
         if (!$accessToken){
             //die('https://oapi.dingtalk.com/gettoken?'.$param);
-            $response = Request::get('https://oapi.dingtalk.com/sns/gettoken?'.$param)->send();
+
+            $response = Request::get('https://oapi.dingtalk.com/sns/gettoken?'.$param)->TimeoutIn(10)->send();
             if ($response->hasErrors()){
                 var_dump($response);
                 exit;
             }
             if(!is_object($response->body)){
             $response->body=json_decode($response->body);
-        }   
+        }
             // if ($response->body->errcode != 0){
             //     var_dump($response->body);
             //     exit;
@@ -100,7 +101,7 @@ class Token{
         $persistent = Cache::get('persistent_'.$code);
         $param=json_encode(
             array(
-                'tmp_auth_code' =>$code, 
+                'tmp_auth_code' =>$code,
             )
         );
 
@@ -108,6 +109,7 @@ class Token{
         if (!$persistent){
             //die('https://oapi.dingtalk.com/gettoken?'.$param);
             $response = Request::post('https://oapi.dingtalk.com/sns/get_persistent_code?access_token='.$accesstoken)
+								->TimeoutIn(10)
                 ->body($param)
                 ->sends('application/json')
                 ->send();
@@ -118,7 +120,7 @@ class Token{
             // }
             if(!is_object($response->body)){
                 $response->body=json_decode($response->body);
-            }   
+            }
             // if ($response->body->errcode != 0){
             //     echo 'getPersistent';
             //     var_dump($response->body);
@@ -141,13 +143,14 @@ class Token{
         $snstoken = Cache::get('snstoken_'.$persistent->openid);
         $param=json_encode(
             array(
-                'openid' =>$persistent->openid, 
+                'openid' =>$persistent->openid,
                 'persistent_code'=>$persistent->persistent_code
             )
         );
         if (!$snstoken){
             //die('https://oapi.dingtalk.com/gettoken?'.$param);
             $response = Request::post('https://oapi.dingtalk.com/sns/get_sns_token?access_token='.$accesstoken)
+								->TimeoutIn(10)
                 ->body($param)
                 ->sends('application/json')
                 ->send();
@@ -158,7 +161,7 @@ class Token{
             // }
             if(!is_object($response->body)){
             $response->body=json_decode($response->body);
-        }   
+        }
             // if ($response->body->errcode != 0){
             //     var_dump($response->body);
             //     exit;
@@ -181,20 +184,20 @@ class Token{
         $jsticket = Cache::get('js_ticket');
         $param=http_build_query(
         	array(
-        		'type' =>'jsapi', 
+        		'type' =>'jsapi',
         		'access_token'=>$this->getAccessToken()
         	)
         );
         if ( !$jsticket) //傻逼钉钉的ticket缓存后总有问题，老子不缓存了。
         {
-            $response = Request::get('https://oapi.dingtalk.com/get_jsapi_ticket?'.$param)->send();
+            $response = Request::get('https://oapi.dingtalk.com/get_jsapi_ticket?'.$param)->TimeoutIn(10)->send();
             if ($response->hasErrors()){
             	var_dump($response);
             	exit;
         	}
             if(!is_object($response->body)){
             $response->body=json_decode($response->body);
-        }   
+        }
         	if ($response->body->errcode != 0){
             	var_dump($response->body);
             	exit;
@@ -211,7 +214,7 @@ class Token{
             '&noncestr=' . $nonceStr .
             '&timestamp=' . $timeStamp .
             '&url=' . $url;
-        return sha1($plain);		
+        return sha1($plain);
 	}
 
 
@@ -239,21 +242,21 @@ class Token{
         }
         $timeStamp = time();
         $nonceStr = md5($timeStamp.'woldy');
-        
+
         if(empty($url)){
             $url = $this->getCurPageURL();
         }
-        
- 
+
+
         $corpAccessToken = $this->getAccessToken();
-         
+
         if (!$corpAccessToken)
         {
             Log::e("[getConfig] ERR: no corp access token");
         }
         $ticket = $this->getJsapiTicket($corpAccessToken);
         $signature = $this->getSignature($ticket, $nonceStr, $timeStamp, $url);
- 
+
         $config = array(
             'url' => $url,
             'nonceStr' => $nonceStr,

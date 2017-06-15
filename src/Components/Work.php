@@ -18,6 +18,7 @@ class Work{
 
 
 						$response = Request::post('https://oapi.dingtalk.com/attendance/list?access_token='.$ACCESS_TOKEN)
+								->TimeoutIn(10)
 		            ->body(json_encode($param))
 		            ->sends('application/json')
 		            ->send();
