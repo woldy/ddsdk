@@ -89,10 +89,10 @@ class Message{
             $tmppath=$_SERVER['DOCUMENT_ROOT']."/../storage/app/tmp/dingup_".str_random(32).".jpg";
         }
 
-	//echo $path;        
 
         file_put_contents($tmppath,file_get_contents($path));
         $response=Request::post('https://oapi.dingtalk.com/media/upload?access_token='.$ACCESS_TOKEN."&type={$type}")
+                    ->TimeoutIn(10)
                     ->attach(array('media' =>$tmppath))
                     ->sends('upload')
                     ->send();
@@ -162,6 +162,7 @@ class Message{
         );
 
         $response = Request::post('https://oapi.dingtalk.com/message/send?access_token='.$ACCESS_TOKEN)
+            ->TimeoutIn(10)
             ->body(json_encode($param))
             ->sends('application/json')
             ->send();

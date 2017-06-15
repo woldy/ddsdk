@@ -22,7 +22,7 @@ class Contacts{
         		)
         	);
 
-            $response = Request::get('https://oapi.dingtalk.com/user/getuserinfo?'.$param)->send();
+            $response = Request::get('https://oapi.dingtalk.com/user/getuserinfo?'.$param)->TimeoutIn(10)->send();
             if ($response->hasErrors()){
             	var_dump($response);
             	exit;
@@ -54,7 +54,7 @@ class Contacts{
         		)
         	);
 
-            $response = Request::get('https://oapi.dingtalk.com/user/get?'.$param)->send();
+            $response = Request::get('https://oapi.dingtalk.com/user/get?'.$param)->TimeoutIn(10)->send();
             if ($response->hasErrors()){
             	var_dump($response);
             	exit;
@@ -158,7 +158,7 @@ class Contacts{
                         } catch (\Httpful\Exception\ConnectionErrorException $e) {
                             $users=Group::getGroupUsers($group['id'],$ACCESS_TOKEN,$refresh);
                         }
-                        
+
                         foreach ($users as $user) {
                             array_push($allusers, json_decode(json_encode($user),true));
                         }
@@ -201,6 +201,7 @@ class Contacts{
         $response = Request::post('https://oapi.dingtalk.com/user/create?access_token='.$ACCESS_TOKEN)
             ->body(json_encode($user))
             ->sends('application/json','application/json')
+            ->TimeoutIn(10)
             ->send();
         if ($response->hasErrors()){
             // var_dump($response);
@@ -222,6 +223,7 @@ class Contacts{
         $response = Request::post('https://oapi.dingtalk.com/user/update?access_token='.$ACCESS_TOKEN)
             ->body(json_encode($user),'json')
             ->sends('application/json')
+            ->TimeoutIn(10)
             ->send();
 
 
@@ -261,7 +263,7 @@ class Contacts{
                 )
             );
 
-            $response = Request::get('https://oapi.dingtalk.com/sns/getuserinfo?'.$param)->send();
+            $response = Request::get('https://oapi.dingtalk.com/sns/getuserinfo?'.$param)->TimeoutIn(10)->send();
             if ($response->hasErrors()){
                 var_dump($response);
                 exit;
@@ -294,7 +296,7 @@ class Contacts{
                 )
             );
 
-            $response = Request::get('https://oapi.dingtalk.com/user/getUseridByUnionid?'.$param)->send();
+            $response = Request::get('https://oapi.dingtalk.com/user/getUseridByUnionid?'.$param)->TimeoutIn(10)->send();
             if ($response->hasErrors()){
                 var_dump($response);
                 exit;
@@ -322,7 +324,7 @@ class Contacts{
                 )
             );
             //die('https://oapi.dingtalk.com/user/delete?'.$param);
-            $response = Request::get('https://oapi.dingtalk.com/user/delete?'.$param)->send();
+            $response = Request::get('https://oapi.dingtalk.com/user/delete?'.$param)->TimeoutIn(10)->send();
             if ($response->hasErrors()){
                // var_dump($response);
                // exit;
@@ -349,6 +351,7 @@ class Contacts{
             ]
         ];
         $response = Request::post('https://oapi.dingtalk.com/message/send_to_conversation?access_token='.$ACCESS_TOKEN)
+            ->TimeoutIn(10)
             ->body(json_encode($param))
             ->sends('application/json')
             ->send();
