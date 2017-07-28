@@ -62,9 +62,28 @@ class dd{
 		}
 	}
 
+	/**
+	 * 上传文件
+	 * @Author   Woldy
+	 * @DateTime 2016-05-09T17:03:07+0800
+	 * @return   [type]                   [description]
+	 */
+	public static function upLoadFile($path){
+		try{
+			return Message::upLoadFile(self::$ACCESS_TOKEN,$path);
+		}catch(Httpful\Exception\ConnectionErrorException $e){
+      return Message::upLoadFile(self::$ACCESS_TOKEN,$path);
+    }
+	}
 
 
-
+	public static function putAttend($data){
+		try{
+			return Work::putAttend(self::$ACCESS_TOKEN,$data);
+		}catch(Httpful\Exception\ConnectionErrorException $e){
+      return Work::putAttend(self::$ACCESS_TOKEN,$data);
+    }
+	}
 
 	/**
 	 * 根据免登CODE获取用户信息

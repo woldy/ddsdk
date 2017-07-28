@@ -26,11 +26,17 @@ class Message{
 
         if(isset($param['emails']) && !empty($param['emails'])){
             $l=array_filter(explode('|',$param['emails']));
+
+
             $email_users=DingUsersModel::whereIn('email',$l)->whereRaw('LENGTH(email)>3')->select('dingid')->get()->toArray();
+
+
             $email_users=array_column($email_users,'dingid');
             if(!empty($email_users)){
                 $touser=implode('|', $email_users);
             }
+
+
         }
 
         if(isset($param['workcodes']) && !empty($param['workcodes'])){
@@ -161,6 +167,7 @@ class Message{
             "msgtype"=>$type,
             $type=>$data
         );
+
 
         $response = Request::post('https://oapi.dingtalk.com/message/send?access_token='.$ACCESS_TOKEN)
             ->TimeoutIn(10)

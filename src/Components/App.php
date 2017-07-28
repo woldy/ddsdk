@@ -42,17 +42,17 @@ class App{
             ->send();
 
             if ($response->hasErrors()){
-            	var_dump($response);
-            	exit;
+            	// var_dump($response);
+            	// exit;
         	}
             if(!is_object($response->body)){
                 $response->body=json_decode($response->body);
             }
 
         	if ($response->body->errcode != 0){
-                var_dump('https://oapi.dingtalk.com/microapp/set_visible_scopes?access_token=ACCESS_TOKEN');
-            	var_dump($response);
-            	exit;
+              //   var_dump('https://oapi.dingtalk.com/microapp/set_visible_scopes?access_token=ACCESS_TOKEN');
+            	// var_dump($response);
+            	// exit;
         	}
 
           return $response->body;

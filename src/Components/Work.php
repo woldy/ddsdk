@@ -37,4 +37,29 @@ class Work{
             return $response->body;
 	}
 
+
+	public static function putAttend($ACCESS_TOKEN,$data){
+		$seed='checkrecordforxier';
+
+		$param=array(
+				'access_token' =>$ACCESS_TOKEN,
+				'data'=>$data,
+				'sign'=>md5($seed.$data),
+		);
+
+		//var_dump($param);
+
+		$response = Request::post('https://oapi.dingtalk.com/attendance/uploadCheckRecordForXier?access_token='.$ACCESS_TOKEN)
+		->TimeoutIn(10)
+		->body(json_encode($param),'json')
+		->sends('application/json')
+		->send();
+
+		if ($response->hasErrors()){
+				// var_dump($response);
+				// exit;
+		}
+
+		return $response->body;
+	}
 }

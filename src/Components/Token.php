@@ -32,14 +32,14 @@ class Token{
         );
         if (!$accessToken){
         	//die('https://oapi.dingtalk.com/gettoken?'.$param);
-            $response = Request::get('https://oapi.dingtalk.com/gettoken?'.$param)->TimeoutIn(10)->send();
+          $response = Request::get('https://oapi.dingtalk.com/gettoken?'.$param)->TimeoutIn(10)->send();
         	if ($response->hasErrors()){
             	var_dump($response);
             	exit;
         	}
             if(!is_object($response->body)){
             $response->body=json_decode($response->body);
-        }
+        	}
         	// if ($response->body->errcode != 0){
          //    	var_dump($response->body);
          //    	exit;
