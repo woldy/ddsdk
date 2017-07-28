@@ -1,6 +1,6 @@
 <?php
 namespace Woldy\ddsdk\Components;
-use Cache;  
+use Cache;
 use Storage;
 use Httpful\Request;
 class dCrypt{
@@ -9,7 +9,7 @@ class dCrypt{
 	private $m_suiteKey;
 
 	public  $OK = 0;
-	
+
 	public $IllegalAesKey = 900004;
 	public $ValidateSignatureError = 900005;
 	public $ComputeSignatureError = 900006;
@@ -23,10 +23,10 @@ class dCrypt{
 		$this->m_suiteKey = $suiteKey;
 	}
 
-	
+
 	public function EncryptMsg($plain, $timeStamp, $nonce, &$encryptMsg)
 	{
- 
+
 		$array = $this->encrypt($this->m_encodingAesKey,$plain, $this->m_suiteKey);
 		$ret = $array[0];
 		if ($ret != 0) {
@@ -38,7 +38,7 @@ class dCrypt{
 		}
 		$encrypt = $array[1];
 
- 
+
 		$array = $this->getSHA1($this->m_token, $timeStamp, $nonce, $encrypt);
 		$ret = $array[0];
 		if ($ret != 0) {
@@ -61,7 +61,7 @@ class dCrypt{
 		if (strlen($this->m_encodingAesKey) != 43) {
 			return $this->IllegalAesKey;
 		}
- 
+
 		if ($timeStamp == null) {
 			$timeStamp = time();
 		}
@@ -76,7 +76,7 @@ class dCrypt{
 
 		$verifySignature = $array[1];
 		if ($verifySignature != $signature) {
-			return ErrorCode::$ValidateSignatureError;
+			return $this->ValidateSignatureError;
 		}
 
 		$result = $this->decrypt($this->m_encodingAesKey,$encrypt, $this->m_suiteKey);
@@ -204,5 +204,5 @@ class dCrypt{
 			$str .= $str_pol[mt_rand(0, $max)];
 		}
 		return $str;
-	}	
+	}
 }
