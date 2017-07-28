@@ -502,7 +502,7 @@ class dd{
     	// ];
 	}
 
-	public static function decrypt($signature,$timeStamp,$nonce,$encrypt,$crypt_token='',$aes_key=''){
+	public static function decrypt($signature,$timeStamp,$nonce,$encrypt,$crypt_token='',$aes_key='',$CorpID=''){
 		if(empty($crypt_token)){
 			$crypt_token=self::$config->get('dd')['CryptToken'];
 		}
@@ -510,7 +510,10 @@ class dd{
 			$aes_key=self::$config->get('dd')['AesKey'];
 		}
 
-		$CorpID=self::$config->get('dd')['CorpID'];
+		if(empty($CorpID)){
+			$CorpID=self::$config->get('dd')['CorpID'];
+		}
+
 		$dCrypt=new dCrypt($crypt_token,$aes_key,$CorpID);
 		// $signature = $_GET["signature"];
 		// $timeStamp = $_GET["timestamp"];
