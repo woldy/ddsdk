@@ -485,12 +485,19 @@ class dd{
 
 	}
 
-	public static function encrypt($signature, $timeStamp, $nonce, $string){
-		$crypt_token=self::$config->get('dd')['CryptToken'];
-		$aes_key=self::$config->get('dd')['AesKey'];
-		$CorpID=self::$config->get('dd')['CorpID'];
-		$dCrypt=new dCrypt($crypt_token,$aes_key,$CorpID);
+	public static function encrypt($signature, $timeStamp, $nonce, $string,$crypt_token='',$aes_key='',$CorpID=''){
+		if(empty($crypt_token)){
+			$crypt_token=self::$config->get('dd')['CryptToken'];
+		}
+		if(empty($aes_key)){
+			$aes_key=self::$config->get('dd')['AesKey'];
+		}
 
+		if(empty($CorpID)){
+			$CorpID=self::$config->get('dd')['CorpID'];
+		}
+
+			$dCrypt=new dCrypt($crypt_token,$aes_key,$CorpID);
     	$encryptMsg = "";
     	$errCode = $dCrypt->EncryptMsg($string, $timeStamp, $nonce, $encryptMsg);
 
