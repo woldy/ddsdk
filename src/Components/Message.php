@@ -104,7 +104,6 @@ class Message{
                     ->send();
         if($response->body->errcode!=0){
             echo json_encode($response->body);
-            exit;
         }
         return $response->body;
     }
@@ -175,16 +174,12 @@ class Message{
             ->sends('application/json')
             ->send();
         if ($response->hasErrors()){
-            var_dump($response);
-            exit;
         }
 
         if(!is_object($response->body)){
             $response->body=json_decode($response->body);
         }
         if ($response->body->errcode != 0){
-            var_dump($response->body);
-            exit;
         }
         return $response->body;
 
