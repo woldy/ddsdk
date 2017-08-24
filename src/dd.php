@@ -50,7 +50,7 @@ class dd{
 
 
 	/**
-	 * 获取SSO配置
+	 * 获取SSO配置,好像没啥卵用了
 	 */
 	public static function getSsoConfig($ssoid){
 		$ssolist=self::$config->get('dd')['sso'];
@@ -107,9 +107,10 @@ class dd{
 	 */
 	public static function getUserInfoByUid($uid){
 		try{
-						return Contacts::getUserInfoByUid(self::$ACCESS_TOKEN,$uid);
+				return Contacts::getUserInfoByUid(self::$ACCESS_TOKEN,$uid);
 		}catch(Httpful\Exception\ConnectionErrorException $e){
-            return Contacts::getUserInfoByUid(self::$ACCESS_TOKEN,$uid);
+				echo 'retry';
+        return Contacts::getUserInfoByUid(self::$ACCESS_TOKEN,$uid);
     }
 	}
 
@@ -207,9 +208,9 @@ class dd{
 
 
 		try{
-			return Contacts::delUserByIds($accesstoken,$ids);
+				return Contacts::delUserByIds($accesstoken,$ids);
 		}catch(Httpful\Exception\ConnectionErrorException $e){
-           return Contacts::delUserByIds($accesstoken,$ids);
+        return Contacts::delUserByIds($accesstoken,$ids);
     }
 	}
 
@@ -224,7 +225,7 @@ class dd{
 		try{
 			return Contacts::addUser($accesstoken,$user);
 		}catch(Httpful\Exception\ConnectionErrorException $e){
-           return Contacts::addUser($accesstoken,$user);
+      return Contacts::addUser($accesstoken,$user);
     }
 
 	}
@@ -234,9 +235,8 @@ class dd{
 		try{
 			return Contacts::updateUser($accesstoken,$user);
 		}catch(Httpful\Exception\ConnectionErrorException $e){
-           return Contacts::updateUser($accesstoken,$user);
+      return Contacts::updateUser($accesstoken,$user);
     }
-
 	}
 
 	public static function createChat($user_ids,$chat_title){
