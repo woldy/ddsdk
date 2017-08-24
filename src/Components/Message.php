@@ -105,6 +105,8 @@ class Message{
         if($response->body->errcode!=0){
             echo json_encode($response->body);
         }
+
+				unlink($tmppath);
         return $response->body;
     }
 
