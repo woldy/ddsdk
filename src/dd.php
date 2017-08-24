@@ -235,6 +235,7 @@ class dd{
 		try{
 			return Contacts::updateUser($accesstoken,$user);
 		}catch(Httpful\Exception\ConnectionErrorException $e){
+			echo 'retry';
       return Contacts::updateUser($accesstoken,$user);
     }
 	}
