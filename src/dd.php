@@ -240,6 +240,18 @@ class dd{
     }
 	}
 
+
+	public static function addUserToGroup($userid,$groupid){
+		$accesstoken=self::$ACCESS_TOKEN;
+		try{
+			return Contacts::addUserToGroup($accesstoken,$userid,$groupid);
+		}catch(Httpful\Exception\ConnectionErrorException $e){
+			echo 'retry';
+      return Contacts::addUserToGroup($accesstoken,$userid,$groupid);
+    }
+	}
+
+
 	public static function createChat($user_ids,$chat_title){
 		$accesstoken=self::$ACCESS_TOKEN;
 		return Chat::createChat($accesstoken,$user_ids,$chat_title);
@@ -382,7 +394,25 @@ class dd{
 
 
 	public static function reg_callback($url,$crypt_token='Ca11Back@W0LDy',$aes_key='vFj6jfj7EtDQzPrN0NqWbElkaCN8ZbGDRX86ayxMT5w',
-		$call_back_tag=['user_add_org', 'user_modify_org', 'user_leave_org','org_admin_add', 'org_admin_remove', 'org_dept_create', 'org_dept_modify', 'org_dept_remove', 'org_remove', 'chat_add_member', 'chat_remove_member', 'chat_quit', 'chat_update_owner', 'chat_update_title', 'chat_disband', 'chat_disband_microapp'
+		$call_back_tag=[
+			'user_add_org',
+			'user_modify_org',
+			'user_leave_org',
+			'org_admin_add',
+			'org_admin_remove',
+			'org_dept_create',
+			'org_dept_modify',
+			'org_dept_remove',
+			'org_remove',
+			'chat_add_member',
+			'chat_remove_member',
+			'chat_quit',
+			'chat_update_owner',
+			'chat_update_title',
+			'chat_disband',
+			'chat_disband_microapp',
+			'bpms_instance_change',
+			'bpms_task_change'
 		]){
 		$accesstoken=self::$ACCESS_TOKEN;
 

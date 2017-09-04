@@ -370,6 +370,24 @@ class Contacts{
     }
 
 
+    public static function addUserToGroup($ACCESS_TOKEN,$userid,$groupid){
+        $user=self::getUserInfoByUid($ACCESS_TOKEN,$userid);
+        if(isset($user->roles)){
+          unset($user->roles);
+        }
+        //
+        // if(isset($user['role'])){
+        //   unset($user['role']);
+        // }
+        //
+        // if(isset($user['role'])){
+        //   unset($user['role']);
+        // }
+        array_push($user->department,$groupid);
+              //  var_dump($user);
+        $user=self::updateUser($ACCESS_TOKEN,$user);
+        return true;
+    }
 
 
 }
