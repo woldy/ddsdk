@@ -89,8 +89,8 @@ class Isv{
 			IsvCorpModel::create($corp);
 		}
 
-		Log::info($corp);
-		Log::info($response->body);
+		Log::info(json_encode($corp));
+		Log::info(json_encode($response->body));
 
 		return $corp;
 	}
