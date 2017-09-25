@@ -36,7 +36,6 @@ class Isv{
 	}
 
 	public static function Callback($msg){
-		Log::info('00000');
 		switch ($msg['EventType']) {
 			case 'suite_ticket':
 				return self::upTicket($msg);
@@ -52,7 +51,6 @@ class Isv{
 	}
 
 	public static function Active($msg){
-		Log::info('1111');
 		$corp_info=self::get_permanent_code($msg);
 	}
 
@@ -68,7 +66,6 @@ class Isv{
 	}
 
 	public static function get_permanent_code($msg){
-		Log::info('2222222');
 		$param=[
 				"tmp_auth_code"=>$msg['AuthCode'],
 		];
@@ -79,7 +76,7 @@ class Isv{
 		->send();
 
 		$corp=[
-			'corpid'=>$response->body->auth_corp_info->corpid,
+			'corp_id'=>$response->body->auth_corp_info->corpid,
 			'corp_name'=>$response->body->auth_corp_info->corp_name,
 			'permanent_code'=>$response->body->auth_corp_info->permanent_code,
 			'ch_permanent_code'=>$response->body->auth_corp_info->ch_permanent_code,
