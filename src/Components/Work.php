@@ -47,7 +47,7 @@ class Work{
 				'sign'=>md5($seed.$content),
 		);
 
-		var_dump($param);
+ 
 
 		$response = Request::post('https://oapi.dingtalk.com/attendance/uploadCheckRecordForXier?access_token='.$ACCESS_TOKEN)
 		->TimeoutIn(10)

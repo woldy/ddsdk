@@ -5,6 +5,7 @@ use Cache;
 use Httpful\Request;
 use Woldy\ddsdk\Components\Work;
 use App\Models\ISV\IsvConfigModel;
+use App\Models\ISV\IsvCorpModel;
 class Isv{
 	public static $ACCESS_TOKEN;
 	public function __construct(Repository $config){
@@ -15,7 +16,6 @@ class Isv{
 
 
 	public static function get_suite_token(){
-
 		$accessToken = Cache::get('isv_access_token');
 		if (!$accessToken){
 			$param=[
@@ -28,14 +28,29 @@ class Isv{
 			->sends('application/json')
 			->TimeoutIn(10)
 			->send();
-
-			if(!is_object($response->body)){
-					$response->body=json_decode($response->body);
-			}
 			$accessToken = $response->body->suite_access_token;
 			Cache::put('isv_access_token', $accessToken,60);
 		}
 		return $accessToken;
+	}
+
+	public static function Callback($msg){
+		switch ($msg['EventType']) {
+			case 'suite_ticket':
+				return self::upTicket($msg);
+				break;
+			case 'tmp_auth_code':
+				return self::Active($msg);
+				break;
+			default:
+				# code...
+				break;
+		}
+		return false;
+	}
+
+	public static function Active($msg){
+		$corp_info=self::get_permanent_code($msg);
 	}
 
 	public static function upTicket($msg){
@@ -49,8 +64,28 @@ class Isv{
       return Work::putAttend(self::$ACCESS_TOKEN,$data);
 	}
 
-	public static function get_permanent_code(){
-		return true;
+	public static function get_permanent_code($msg){
+		$param=[
+				"tmp_auth_code"=>$msg['AuthCode'],
+		];
+		$response = Request::post('https://oapi.dingtalk.com/service/get_suite_token')
+		->body(json_encode($param),'json')
+		->sends('application/json')
+		->TimeoutIn(10)
+		->send();
+
+		$corp=[
+			'corpid'=>$response->body->auth_corp_info->corpid,
+			'corp_name'=>$response->body->auth_corp_info->corp_name,
+			'permanent_code'=>$response->body->auth_corp_info->permanent_code,
+			'ch_permanent_code'=>$response->body->auth_corp_info->ch_permanent_code,
+		];
+
+		IsvCorpModel::create($corp);
+
+		var_dump(json_encode($corp));
+
+		return $corp;
 	}
 
 }
