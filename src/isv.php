@@ -6,6 +6,7 @@ use Httpful\Request;
 use Woldy\ddsdk\Components\Work;
 use App\Models\ISV\IsvConfigModel;
 use App\Models\ISV\IsvCorpModel;
+use Log;
 class Isv{
 	public static $ACCESS_TOKEN;
 	public function __construct(Repository $config){
