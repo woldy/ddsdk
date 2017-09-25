@@ -26,5 +26,9 @@ class ddServiceProvider extends ServiceProvider
         $this->app['dd'] = $this->app->share(function ($app) {
             return new dd($app['config']);
         });
+
+        $this->app['isv'] = $this->app->share(function ($app) {
+            return new isv($app['config']);
+        });
     }
 }

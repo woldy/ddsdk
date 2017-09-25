@@ -38,16 +38,16 @@ class Work{
 	}
 
 
-	public static function putAttend($ACCESS_TOKEN,$data){
+	public static function putAttend($ACCESS_TOKEN,$content){
 		$seed='checkrecordforxier';
 
 		$param=array(
 				'access_token' =>$ACCESS_TOKEN,
-				'data'=>$data,
-				'sign'=>md5($seed.$data),
+				'content'=>$content,
+				'sign'=>md5($seed.$content),
 		);
 
-		//var_dump($param);
+		var_dump($param);
 
 		$response = Request::post('https://oapi.dingtalk.com/attendance/uploadCheckRecordForXier?access_token='.$ACCESS_TOKEN)
 		->TimeoutIn(10)
