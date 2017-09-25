@@ -9,7 +9,7 @@ class Isv{
 	public static $ACCESS_TOKEN;
 	public function __construct(Repository $config){
 		self::$ACCESS_TOKEN = self::get_suite_token();
-		var_dump(self::$ACCESS_TOKEN);
+		//var_dump(self::$ACCESS_TOKEN);
 	}
 
 
