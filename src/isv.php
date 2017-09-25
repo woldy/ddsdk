@@ -43,7 +43,7 @@ class Isv{
 				return self::Active($msg);
 				break;
 			default:
-				# code...
+				Log::info($msg['EventType']);
 				break;
 		}
 		return false;
