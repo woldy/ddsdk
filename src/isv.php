@@ -50,6 +50,7 @@ class Isv{
 	}
 
 	public static function Active($msg){
+		Log::info('1111');
 		$corp_info=self::get_permanent_code($msg);
 	}
 
@@ -65,6 +66,7 @@ class Isv{
 	}
 
 	public static function get_permanent_code($msg){
+		Log::info('2222222');
 		$param=[
 				"tmp_auth_code"=>$msg['AuthCode'],
 		];
@@ -83,7 +85,7 @@ class Isv{
 
 		IsvCorpModel::create($corp);
 
-		var_dump(json_encode($corp));
+		Log::info(json_encode($corp));
 
 		return $corp;
 	}
