@@ -1,6 +1,7 @@
 <?php
 namespace Woldy\ddsdk\Components;
 use Cache;
+use Log;
 use Storage;
 use Httpful\Request;
 use App\Models\Ding\DingUsersModel;
@@ -103,6 +104,7 @@ class Message{
                     ->sends('upload')
                     ->send();
         if($response->body->errcode!=0){
+						Log::info('ding-msg-up-file-error:'.$path);
             return $response->body;
         }
 
