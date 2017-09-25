@@ -35,6 +35,7 @@ class Isv{
 	}
 
 	public static function Callback($msg){
+		Log::info('00000');
 		switch ($msg['EventType']) {
 			case 'suite_ticket':
 				return self::upTicket($msg);
