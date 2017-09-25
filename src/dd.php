@@ -69,20 +69,12 @@ class dd{
 	 * @return   [type]                   [description]
 	 */
 	public static function upLoadFile($path){
-		try{
-			return Message::upLoadFile(self::$ACCESS_TOKEN,$path);
-		}catch(Httpful\Exception\ConnectionErrorException $e){
       return Message::upLoadFile(self::$ACCESS_TOKEN,$path);
-    }
 	}
 
 
 	public static function putAttend($data){
-		try{
-			return Work::putAttend(self::$ACCESS_TOKEN,$data);
-		}catch(Httpful\Exception\ConnectionErrorException $e){
       return Work::putAttend(self::$ACCESS_TOKEN,$data);
-    }
 	}
 
 	/**
@@ -92,11 +84,7 @@ class dd{
 	 * @return   [type]                   [description]
 	 */
 	public static function getUserInfoByCode($authcode){
-		try{
 			return Contacts::getUserInfoByCode(self::$ACCESS_TOKEN,$authcode);
-		}catch(Httpful\Exception\ConnectionErrorException $e){
-            return Contacts::getUserInfoByCode(self::$ACCESS_TOKEN,$authcode);
-    }
 	}
 
 	/**
@@ -106,12 +94,7 @@ class dd{
 	 * @return   [type]                   [description]
 	 */
 	public static function getUserInfoByUid($uid){
-		try{
 				return Contacts::getUserInfoByUid(self::$ACCESS_TOKEN,$uid);
-		}catch(Httpful\Exception\ConnectionErrorException $e){
-				echo 'retry';
-        return Contacts::getUserInfoByUid(self::$ACCESS_TOKEN,$uid);
-    }
 	}
 
 	/**
@@ -123,11 +106,7 @@ class dd{
 	 * @return   [type]                            [description]
 	 */
 	public static function sendMessage($touser,$toparty,$content,$type='text'){
-		try{
-						return Message::sendMessage($touser,$toparty,$content,self::$config,self::$ACCESS_TOKEN,$type='text');
-		}catch(Httpful\Exception\ConnectionErrorException $e){
-            return Message::sendMessage($touser,$toparty,$content,self::$config,self::$ACCESS_TOKEN,$type='text');
-  	}
+        return Message::sendMessage($touser,$toparty,$content,self::$config,self::$ACCESS_TOKEN,$type='text');
 	}
 
 	/**
@@ -142,13 +121,7 @@ class dd{
 			$code=Input::get('code');
 		}
 
-
-		try{
-					return Message::sendMessageByCode(self::$ACCESS_TOKEN,self::$config,$code);
-		}catch(Httpful\Exception\ConnectionErrorException $e){
-           return Message::sendMessageByCode(self::$ACCESS_TOKEN,self::$config,$code);
-    }
-
+		return Message::sendMessageByCode(self::$ACCESS_TOKEN,self::$config,$code);
 	}
 
 
@@ -163,23 +136,11 @@ class dd{
 		$accesstoken=self::$token->getSnsAccessToken();
 		$persistent=self::$token->getPersistent($accesstoken,$code);
 		$snscode=self::$token->getSnsToken($accesstoken,$persistent);
-		try{
-					$userinfo=Contacts::getUserInfoBySns($snscode);
-		}catch(Httpful\Exception\ConnectionErrorException $e){
-           $userinfo=Contacts::getUserInfoBySns($snscode);
-    }
 
-		try{
-					$userid=Contacts::getUserIdByUnionId(self::$ACCESS_TOKEN,$userinfo->unionid);
-		}catch(Httpful\Exception\ConnectionErrorException $e){
-           $userid=Contacts::getUserIdByUnionId(self::$ACCESS_TOKEN,$userinfo->unionid);
-    }
+		$userinfo=Contacts::getUserInfoBySns($snscode);
+		$userid=Contacts::getUserIdByUnionId(self::$ACCESS_TOKEN,$userinfo->unionid);
+		$userinfo=Contacts::getUserInfoByUid(self::$ACCESS_TOKEN,$userid);
 
-		try{
-					$userinfo=Contacts::getUserInfoByUid(self::$ACCESS_TOKEN,$userid);
-		}catch(Httpful\Exception\ConnectionErrorException $e){
-           $userinfo=Contacts::getUserInfoByUid(self::$ACCESS_TOKEN,$userid);
-    }
 
 		return $userinfo;
 	}

@@ -103,7 +103,7 @@ class Message{
                     ->sends('upload')
                     ->send();
         if($response->body->errcode!=0){
-            echo json_encode($response->body);
+            return $response->body;
         }
 
 				unlink($tmppath);
