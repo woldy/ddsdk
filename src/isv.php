@@ -68,7 +68,7 @@ class Isv{
 		$param=[
 				"tmp_auth_code"=>$msg['AuthCode'],
 		];
-		$response = Request::post('https://oapi.dingtalk.com/service/get_suite_token')
+		$response = Request::post('https://oapi.dingtalk.com/service/get_permanent_code?suite_access_token='.self::$ACCESS_TOKEN)
 		->body(json_encode($param),'json')
 		->sends('application/json')
 		->TimeoutIn(10)
