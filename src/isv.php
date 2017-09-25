@@ -82,9 +82,15 @@ class Isv{
 			'ch_permanent_code'=>$response->body->auth_corp_info->ch_permanent_code,
 		];
 
-		IsvCorpModel::create($corp);
+		$m_corp=IsvCorpModel::where('corp_id',$corp['corp_id'])->first();
+		if(!empty($m_corp)){
+			$m_corp->update($corp);
+		}else{
+			IsvCorpModel::create($corp);
+		}
 
-		Log::info(json_encode($corp));
+		Log::info($corp);
+		Log::info($response->body);
 
 		return $corp;
 	}
