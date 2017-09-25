@@ -78,8 +78,8 @@ class Isv{
 		$corp=[
 			'corp_id'=>$response->body->auth_corp_info->corpid,
 			'corp_name'=>$response->body->auth_corp_info->corp_name,
-			'permanent_code'=>$response->body->auth_corp_info->permanent_code,
-			'ch_permanent_code'=>$response->body->auth_corp_info->ch_permanent_code,
+			'permanent_code'=>$response->body->permanent_code,
+			'ch_permanent_code'=>$response->body->ch_permanent_code??'',
 		];
 
 		$m_corp=IsvCorpModel::where('corp_id',$corp['corp_id'])->first();
