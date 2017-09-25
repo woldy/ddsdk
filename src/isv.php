@@ -17,7 +17,7 @@ class Isv{
 
 
 	public static function get_suite_token(){
-		$accessToken = Cache::get('isv_access_token');
+		$accessToken = Cache::get('isv_suite_token');
 		if (!$accessToken){
 			$param=[
 					"suite_key"=>'suitevorubtzcjxo4481g',
@@ -30,7 +30,7 @@ class Isv{
 			->TimeoutIn(10)
 			->send();
 			$accessToken = $response->body->suite_access_token;
-			Cache::put('isv_access_token', $accessToken,60);
+			Cache::put('isv_suite_token', $accessToken,60);
 		}
 		return $accessToken;
 	}
@@ -41,7 +41,7 @@ class Isv{
 				return self::upTicket($msg);
 				break;
 			case 'tmp_auth_code':
-				return self::Active($msg);
+				return self::Activate($msg);
 				break;
 			default:
 				Log::info($msg['EventType']);
@@ -50,8 +50,9 @@ class Isv{
 		return false;
 	}
 
-	public static function Active($msg){
-		$corp_info=self::get_permanent_code($msg);
+	public static function Activate($msg){
+		$corp=self::get_permanent_code($msg);
+		return self::activate_suite($corp);
 	}
 
 	public static function upTicket($msg){
@@ -89,10 +90,22 @@ class Isv{
 			IsvCorpModel::create($corp);
 		}
 
-		Log::info(json_encode($corp));
-		Log::info(json_encode($response->body));
-
 		return $corp;
+	}
+
+	public function activate_suite($corp){
+		$param=[
+				"suite_key"=>'suitevorubtzcjxo4481g',
+				'auth_corpid'=>$corp['corp_id'],
+				'permanent_code'=>$corp['permanent_code']
+		];
+		$response = Request::post('https://oapi.dingtalk.com/service/activate_suite?suite_access_token='.self::$ACCESS_TOKEN)
+		->body(json_encode($param),'json')
+		->sends('application/json')
+		->TimeoutIn(10)
+		->send();
+
+		return true;
 	}
 
 }
