@@ -57,7 +57,7 @@ class Isv{
 	}
 
 	//更新套件
-	public static upSuiteUrl($suite_key,$msg){
+	public static function upSuiteUrl($suite_key,$msg){
 		return true;
 	}
 
@@ -68,7 +68,7 @@ class Isv{
 	}
 
 	public static function upTicket($suite_key,$msg){
-		IsvSuiteModel::::where('suite_key','=',$suite_key)->first()
+		IsvSuiteModel::where('suite_key','=',$suite_key)->first()
 			->update([
 				'suite_ticket'=>$msg['SuiteTicket']
 			]);
