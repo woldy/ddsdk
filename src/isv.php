@@ -12,7 +12,7 @@ class Isv{
 
 	//根据suite_key获取应用套件
 	public static function get_suite($suite_key){
-		$suite=IsvSuiteModel::::where('suite_key','=',$suite_key)->first();
+		$suite=IsvSuiteModel::where('suite_key','=',$suite_key)->first();
 		return $suite;
 	}
 
