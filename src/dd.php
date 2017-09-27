@@ -1,5 +1,6 @@
 <?php
 namespace Woldy\ddsdk;
+use App\Http\Common\ArrayToolkit;
 use Illuminate\Config\Repository;
 use Woldy\ddsdk\Components\Token;
 use Woldy\ddsdk\Components\Message;
