@@ -47,7 +47,7 @@ class Work{
 				'sign'=>md5($seed.$content),
 		);
 
- 
+
 
 		$response = Request::post('https://oapi.dingtalk.com/attendance/uploadCheckRecordForXier?access_token='.$ACCESS_TOKEN)
 		->TimeoutIn(10)
@@ -62,4 +62,33 @@ class Work{
 
 		return $response->body;
 	}
+
+
+	/**
+ * 获取部门签到记录
+ * @param $accessToken
+ * @param $departmentId
+ * @param $startTime
+ * @param $endTime
+ * @return array|mixed|object|string
+ */
+		public static function getDepartmentSignLogs($accessToken, $departmentId, $startTime, $endTime)
+		{
+				$response = Request::get("https://oapi.dingtalk.com/checkin/record?access_token={$accessToken}&department_id={$departmentId}&start_time={$startTime}&end_time={$endTime}")
+						->TimeoutIn(10)
+						->sends('application/json')
+						->send();
+
+				if ($response->hasErrors()){
+						var_dump($response);
+						exit;
+				}
+
+				if(!is_object($response->body)){
+						$response->body = json_decode($response->body);
+				}
+
+
+				return $response->body;
+		}
 }

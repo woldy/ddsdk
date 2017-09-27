@@ -11,6 +11,7 @@ use Woldy\ddsdk\Components\Work;
 use Woldy\ddsdk\Components\Callback;
 use Woldy\ddsdk\Components\dCrypt;
 use Illuminate\Support\Facades\Input;
+use Woldy\ddsdk\Components\Process;
 use Httpful\Exception\ConnectionErrorException;
 use Httpful\Request;
 class dd{
@@ -552,5 +553,57 @@ class dd{
   //   		'errmsg'=>$msg
   //   	];
 	}
+
+
+
+	public static function getDepartmentSignLogs($departmentId, $startTime, $endTime)
+    {
+        $accessToken = self::$ACCESS_TOKEN;
+
+        return Work::getDepartmentSignLogs($accessToken, $departmentId, $startTime, $endTime);
+    }
+
+    /**
+     * 创建审批流程实例
+     * @param $params
+     * @return array|mixed|object|string
+     */
+    public static function createProcessInstance($params)
+    {
+        $accessToken = self::$ACCESS_TOKEN;
+        $necessaryArrays = [
+            'process_code',
+            'originator_user_id',
+            'dept_id',
+            'approvers',
+            'form_component_values'
+        ];
+
+        if(ArrayToolkit::requireds($params, $necessaryArrays)) {
+
+            return Process::createInstance($accessToken, $params);
+        }
+
+    }
+
+    /**
+     * 获取审批流程内容
+     * @param $params
+     * @return array|mixed|object|string
+     */
+    public static function getProcessData($params)
+    {
+        $accessToken = self::$ACCESS_TOKEN;
+        $necessaryArrays = [
+            'process_code',
+            'start_time',
+            'end_time'
+        ];
+
+        if(ArrayToolkit::requireds($params, $necessaryArrays)) {
+
+            return Process::getProcessData($accessToken, $params);
+        }
+    }
 
 }
