@@ -39,6 +39,7 @@ class Isv{
 
 
 	public static function Callback($suite_key,$msg){
+		
 		switch ($msg['EventType']) {
 			case 'suite_ticket':
 				return self::upTicket($suite_key,$msg);
@@ -53,7 +54,9 @@ class Isv{
 				Log::info($suite_key.'---'.$msg['EventType']);
 				break;
 		}
-		return false;
+
+		$result=dd::encrypt($signature, $timeStamp, $nonce,'success',$suite->suite_token,$suite->suite_enc,$suite->$suite_key);
+		return $result;
 	}
 
 	//更新套件
