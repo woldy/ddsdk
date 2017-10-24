@@ -34,11 +34,11 @@ class dd{
 	 * @Author   Woldy
 	 * @DateTime 2016-05-09T17:01:32+0800
 	 */
-	public static function getJsConfig($appId='',$url=''){
+	public static function getJsConfig($appId='',$url='',$agentid=''){
 		try{
-			return self::$token->getJsConfig($appId,$url);
+			return self::$token->getJsConfig($appId,$url,$agentid);
 		}catch(Httpful\Exception\ConnectionErrorException $e){
-			return self::$token->getJsConfig($appId,$url);
+			return self::$token->getJsConfig($appId,$url,$agentid);
 		}
 	}
 

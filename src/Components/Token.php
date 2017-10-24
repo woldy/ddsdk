@@ -234,9 +234,15 @@ class Token{
     }
 
 
-	public function getJsConfig($appId='',$url=''){
+	public function getJsConfig($appId='',$url='',$agentId=''){
         $corpId =$this->CorpID;
-        $agentId = $this->AgentID;
+
+				if(empty($agentId)){
+					$agentId = $this->AgentID;
+				}
+
+
+
         if(empty($appId)){
             $appId = $this->AppID;
         }
