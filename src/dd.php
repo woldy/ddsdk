@@ -99,6 +99,11 @@ class dd{
 				return Contacts::getUserInfoByUid(self::$ACCESS_TOKEN,$uid);
 	}
 
+	public static function sendToConversation($sender,$cid,$content,$type='text',$media=''){
+		return Message::sendToConversation($sender,$cid,$content,self::$ACCESS_TOKEN,$type,$media);
+	}
+
+
 	/**
 	 * 发送消息
 	 * @Author   Woldy

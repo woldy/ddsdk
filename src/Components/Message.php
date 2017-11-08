@@ -129,6 +129,35 @@ class Message{
             }
     }
 
+
+		public static function sendToConversation($sender,$cid,$content,$ACCESS_TOKEN,$type='text',$media=''){
+
+			$param=array(
+					'sender' =>$sender,
+					'cid'=>$cid,
+					"msgtype"=>$type,
+					$type=>$content
+			);
+
+			var_dump($param);
+
+			$response = Request::post('https://oapi.dingtalk.com/message/send_to_conversation?access_token='.$ACCESS_TOKEN)
+					->TimeoutIn(10)
+					->body(json_encode($param))
+					->sends('application/json')
+					->send();
+			if ($response->hasErrors()){
+			}
+
+			if(!is_object($response->body)){
+					$response->body=json_decode($response->body);
+			}
+			if ($response->body->errcode != 0){
+			}
+			return $response->body;
+
+		}
+
     /**
      * 根据详细参数发送企业消息
      * @Author   Woldy
@@ -159,8 +188,9 @@ class Message{
             if(!empty($media)){
                 $data['body']['image']=$media->media_id;
             }
-
-        }
+        }else{
+						$data=json_decode($content,true);
+				}
 
 
         $param=array(
