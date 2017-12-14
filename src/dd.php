@@ -41,12 +41,12 @@ class dd
      * @Author   Woldy
      * @DateTime 2016-05-09T17:01:32+0800
      */
-    public static function getJsConfig($appId = '', $url = '', $agentid = '')
+    public static function getJsConfig($appId = '', $url = '', $agentid = '',$js_ticket='')
     {
         try {
-            return self::$token->getJsConfig($appId, $url, $agentid);
+            return self::$token->getJsConfig($appId, $url, $agentid,$js_ticket);
         } catch (Httpful\Exception\ConnectionErrorException $e) {
-            return self::$token->getJsConfig($appId, $url, $agentid);
+            return self::$token->getJsConfig($appId, $url, $agentid,$js_ticket);
         }
     }
 

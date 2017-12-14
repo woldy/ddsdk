@@ -234,7 +234,7 @@ class Token{
     }
 
 
-	public function getJsConfig($appId='',$url='',$agentId=''){
+	public function getJsConfig($appId='',$url='',$agentId='',$js_ticket=''){
         $corpId =$this->CorpID;
 
 				if(empty($agentId)){
@@ -254,14 +254,11 @@ class Token{
         }
 
 
-        $corpAccessToken = $this->getAccessToken();
+				if(empty($js_ticket)){
+					$js_ticket = $this->getJsapiTicket();
+				}
 
-        if (!$corpAccessToken)
-        {
-            Log::e("[getConfig] ERR: no corp access token");
-        }
-        $ticket = $this->getJsapiTicket($corpAccessToken);
-        $signature = $this->getSignature($ticket, $nonceStr, $timeStamp, $url);
+        $signature = $this->getSignature($js_ticket, $nonceStr, $timeStamp, $url);
 
         $config = array(
             'url' => $url,
