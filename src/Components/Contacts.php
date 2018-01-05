@@ -31,6 +31,7 @@ class Contacts{
                 $response->body=json_decode($response->body);
             }
         	if ($response->body->errcode != 0){
+            Log::info('code_error'.$response->body.'---'.$CODE);
             return $response->body;
         	}
             $userid = $response->body->userid;
