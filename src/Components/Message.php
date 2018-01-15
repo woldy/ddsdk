@@ -24,24 +24,16 @@ class Message{
         $touser='';
         $toparty=[];
 
-
         if(isset($param['emails']) && !empty($param['emails'])){
             $l=array_filter(explode('|',$param['emails']));
-
-
             $email_users=DingUsersModel::whereIn('email',$l)->whereRaw('LENGTH(email)>3')->select('dingid')->get()->toArray();
-
-
             $email_users=array_column($email_users,'dingid');
             if(!empty($email_users)){
                 $touser=implode('|', $email_users);
             }
-
-
         }
 
         if(isset($param['workcodes']) && !empty($param['workcodes'])){
-
             $l=array_filter(explode('|',$param['workcodes']));
             $workcode_users=DingUsersModel::whereIn('workcode',$l)->whereRaw('LENGTH(workcode)>3')->select('dingid')->get()->toArray();
             $workcode_users=array_column($workcode_users,'dingid');
@@ -113,7 +105,7 @@ class Message{
     }
 
 
-    public static function getUser($email){
+    public static function getUser($email){//大概作废了吧
            $result['list']=[];
             $all=(Storage::disk('local')->get("/ding/all.csv"));
             $list=explode("\n",$all);
@@ -131,7 +123,6 @@ class Message{
 
 
 		public static function sendToConversation($sender,$cid,$content,$ACCESS_TOKEN,$type='text',$media=''){
-
 			$param=array(
 					'sender' =>$sender,
 					'cid'=>$cid,
