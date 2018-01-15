@@ -1,19 +1,24 @@
 {
     "name": "woldy/ddsdk",
     "description": "a very zhazha code for dingtalk to be a sdk",
-	"license":"MIT",
-	"keywords":["ding"],
+	  "license":"MIT",
+	  "keywords":["ding"],
+    "version":"1.0.1",
     "authors": [
         {
             "name": "woldy",
             "email": "king@woldy.net"
         }
     ],
+    "minimum-stability": "dev",
     "require": {
         "nategood/httpful": "*"
     },
-	"autoload": {
-		"psr-4": {
+    "require-dev": {
+        "phpunit/phpunit": "~4.8"
+    },
+	  "autoload": {
+		    "psr-4": {
             "Woldy\\ddsdk\\": "src/"
         }
     }
