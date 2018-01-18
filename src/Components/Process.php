@@ -68,6 +68,7 @@ class Process
             $response->body = json_decode($response->body, true);
         }
 
+      var_dump($response);
 
         return $response->body;
     }

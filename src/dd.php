@@ -51,12 +51,12 @@ class dd
           }
       }
       $response=$resp;
-      if ($response->hasErrors()){
-
-      }
-      if(!is_object($response->body)){
-          $response->body=json_decode($response->body);
-      }
+      // if ($response->hasErrors()){
+      //
+      // }
+      // if(!is_object($response->body)){
+      //     $response->body=json_decode($response->body);
+      // }
 
       // if ($response->body->errcode != 0){
       //
