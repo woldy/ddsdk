@@ -24,8 +24,8 @@ class Process
         $response = Request::post('https://eco.taobao.com/router/rest')
             ->TimeoutIn(10)
             ->body($params)
-            ->sends("application/x-www-form-urlencoded")
-            ->send();
+            ->sends("application/x-www-form-urlencoded");
+        $response=dd::try_http_query($response);
 
 
 
@@ -53,8 +53,8 @@ class Process
         $response = Request::post('https://eco.taobao.com/router/rest')
             ->TimeoutIn(10)
             ->body($params)
-            ->sends("application/x-www-form-urlencoded")
-            ->send();
+            ->sends("application/x-www-form-urlencoded");
+        $response=dd::try_http_query($response);
 
 
 

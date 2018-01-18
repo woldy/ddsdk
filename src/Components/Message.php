@@ -93,8 +93,8 @@ class Message{
         $response=Request::post('https://oapi.dingtalk.com/media/upload?access_token='.$ACCESS_TOKEN."&type={$type}")
                     ->TimeoutIn(10)
                     ->attach(array('media' =>$tmppath))
-                    ->sends('upload')
-                    ->send();
+                    ->sends('upload');
+        $response=dd::try_http_query($response);
         if($response->body->errcode!=0){
 						Log::info('ding-msg-up-file-error:'.$path);
             return $response->body;
@@ -135,8 +135,8 @@ class Message{
 			$response = Request::post('https://oapi.dingtalk.com/message/send_to_conversation?access_token='.$ACCESS_TOKEN)
 					->TimeoutIn(10)
 					->body(json_encode($param))
-					->sends('application/json')
-					->send();
+					->sends('application/json');
+			$response=dd::try_http_query($response);
 			if ($response->hasErrors()){
 			}
 
@@ -196,8 +196,8 @@ class Message{
         $response = Request::post('https://oapi.dingtalk.com/message/send?access_token='.$ACCESS_TOKEN)
             ->TimeoutIn(10)
             ->body(json_encode($param))
-            ->sends('application/json')
-            ->send();
+            ->sends('application/json');
+        $response=dd::try_http_query($response);
         if ($response->hasErrors()){
         }
 

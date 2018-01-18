@@ -1,6 +1,7 @@
 <?php
 namespace Woldy\ddsdk\Components;
 use Httpful\Request;
+use DD;
 class App{
 	public static function getApp($ACCESS_TOKEN,$agentId){
 						$param=array(
@@ -11,22 +12,10 @@ class App{
             $response = Request::post('https://oapi.dingtalk.com/microapp/visible_scopes?access_token='.$ACCESS_TOKEN)
             ->body(json_encode($param),'json')
             ->sends('application/json')
-						->TimeoutIn(10)
-            ->send();
+						->TimeoutIn(10);
+            $response=dd::try_http_query($response);
 
-            if ($response->hasErrors()){
-            	// var_dump($response);
-            	// exit;
-        		}
-            if(!is_object($response->body)){
-                $response->body=json_decode($response->body);
-            }
 
-	        	if ($response->body->errcode != 0){
-	              //   var_dump('https://oapi.dingtalk.com/microapp/visible_scopes?');
-	            	// var_dump($response->body);
-	            	// exit;
-	        	}
 
             return $response->body;
 		}
@@ -38,8 +27,8 @@ class App{
             $response = Request::post('https://oapi.dingtalk.com/microapp/set_visible_scopes?access_token='.$ACCESS_TOKEN)
             ->body(json_encode($app),'json')
             ->sends('application/json')
-						->TimeoutIn(10)
-            ->send();
+						->TimeoutIn(10);
+            $response=dd::try_http_query($response);
 
             if ($response->hasErrors()){
             	// var_dump($response);

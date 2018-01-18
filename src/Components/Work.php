@@ -20,8 +20,8 @@ class Work{
 						$response = Request::post('https://oapi.dingtalk.com/attendance/list?access_token='.$ACCESS_TOKEN)
 								->TimeoutIn(10)
 		            ->body(json_encode($param))
-		            ->sends('application/json')
-		            ->send();
+		            ->sends('application/json');
+		            $response=dd::try_http_query($response);
 
 
             if ($response->hasErrors()){
@@ -52,8 +52,8 @@ class Work{
 		$response = Request::post('https://oapi.dingtalk.com/attendance/uploadCheckRecordForXier?access_token='.$ACCESS_TOKEN)
 		->TimeoutIn(10)
 		->body(json_encode($param),'json')
-		->sends('application/json')
-		->send();
+		->sends('application/json');
+		$response=dd::try_http_query($response);
 
 		if ($response->hasErrors()){
 				// var_dump($response);
@@ -76,8 +76,8 @@ class Work{
 		{
 				$response = Request::get("https://oapi.dingtalk.com/checkin/record?access_token={$accessToken}&department_id={$departmentId}&start_time={$startTime}&end_time={$endTime}")
 						->TimeoutIn(10)
-						->sends('application/json')
-						->send();
+						->sends('application/json');
+					$response=dd::try_http_query($response);
 
 				if ($response->hasErrors()){
 						var_dump($response);

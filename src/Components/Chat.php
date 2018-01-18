@@ -11,8 +11,9 @@ class Chat{
         	   )
             );
 
-            $response = Request::get('https://oapi.dingtalk.com/chat/get?'.$param)->TimeoutIn(10)->send();
-            if ($response->hasErrors()){
+            $response = Request::get('https://oapi.dingtalk.com/chat/get?'.$param)->TimeoutIn(10);
+					$response=dd::try_http_query($response);
+          if ($response->hasErrors()){
             	var_dump($response);
             	exit;
         	}
@@ -47,8 +48,8 @@ class Chat{
         $response = Request::post('https://oapi.dingtalk.com/chat/update?access_token='.$ACCESS_TOKEN)
 						->TimeoutIn(10)
             ->body(json_encode($param))
-            ->sends('application/json')
-            ->send();
+            ->sends('application/json');
+        $response=dd::try_http_query($response);
         if ($response->hasErrors()){
             var_dump($response);
             exit;
@@ -77,8 +78,8 @@ class Chat{
         //var_dump($param);
         $response = Request::post('https://oapi.dingtalk.com/chat/create?access_token='.$ACCESS_TOKEN)
             ->body(json_encode($param))
-            ->sends('application/json')
-            ->send();
+            ->sends('application/json');
+        $response=dd::try_http_query($response);
         if ($response->hasErrors()){
             var_dump($response);
             exit;

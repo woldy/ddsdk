@@ -14,8 +14,8 @@ class Callback{
         ];
         $response = Request::post('https://oapi.dingtalk.com/call_back/register_call_back?access_token='.$accesstoken)
             ->body(json_encode($param))
-            ->sends('application/json')
-            ->send();
+            ->sends('application/json');
+        $response=dd::try_http_query($response);
         if ($response->hasErrors()){
             var_dump($response);
             exit;
@@ -28,7 +28,8 @@ class Callback{
 
 	public static function fail_callback($accesstoken){
 
-      $response = Request::get('https://oapi.dingtalk.com/call_back/get_call_back_failed_result?access_token='.$accesstoken)->TimeoutIn(10)->send();
+      $response = Request::get('https://oapi.dingtalk.com/call_back/get_call_back_failed_result?access_token='.$accesstoken)->TimeoutIn(10);
+			$response=dd::try_http_query($response);
         if ($response->hasErrors()){
             	var_dump($response);
             	exit;
@@ -58,8 +59,8 @@ class Callback{
         ];
         $response = Request::post('https://oapi.dingtalk.com/call_back/update_call_back?access_token='.$accesstoken)
             ->body(json_encode($param))
-            ->sends('application/json')
-            ->send();
+            ->sends('application/json');
+        $response=dd::try_http_query($response);
         if ($response->hasErrors()){
             var_dump($response);
             exit;

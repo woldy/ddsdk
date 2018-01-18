@@ -32,7 +32,8 @@ class Token{
         );
         if (!$accessToken){
         	//die('https://oapi.dingtalk.com/gettoken?'.$param);
-          $response = Request::get('https://oapi.dingtalk.com/gettoken?'.$param)->TimeoutIn(10)->send();
+          $response = Request::get('https://oapi.dingtalk.com/gettoken?'.$param)->TimeoutIn(10);
+					$response=dd::try_http_query($response);
         	if ($response->hasErrors()){
             	var_dump($response);
             	exit;
@@ -72,7 +73,8 @@ class Token{
         if (!$accessToken){
             //die('https://oapi.dingtalk.com/gettoken?'.$param);
 
-            $response = Request::get('https://oapi.dingtalk.com/sns/gettoken?'.$param)->TimeoutIn(10)->send();
+            $response = Request::get('https://oapi.dingtalk.com/sns/gettoken?'.$param)->TimeoutIn(10);
+						$response=dd::try_http_query($response);
             if ($response->hasErrors()){
                 var_dump($response);
                 exit;
@@ -111,8 +113,8 @@ class Token{
             $response = Request::post('https://oapi.dingtalk.com/sns/get_persistent_code?access_token='.$accesstoken)
 								->TimeoutIn(10)
                 ->body($param)
-                ->sends('application/json')
-                ->send();
+                ->sends('application/json');
+            $response=dd::try_http_query($response);
             // if ($response->hasErrors()){
             //     echo 'getPersistent';
             //     var_dump($response);
@@ -152,8 +154,8 @@ class Token{
             $response = Request::post('https://oapi.dingtalk.com/sns/get_sns_token?access_token='.$accesstoken)
 								->TimeoutIn(10)
                 ->body($param)
-                ->sends('application/json')
-                ->send();
+                ->sends('application/json');
+            $response=dd::try_http_query($response);
             // if ($response->hasErrors()){
             //     echo 'getSnsToken';
             //     var_dump($response);
@@ -190,7 +192,8 @@ class Token{
         );
         if ( !$jsticket) //傻逼钉钉的ticket缓存后总有问题，老子不缓存了。
         {
-            $response = Request::get('https://oapi.dingtalk.com/get_jsapi_ticket?'.$param)->TimeoutIn(10)->send();
+            $response = Request::get('https://oapi.dingtalk.com/get_jsapi_ticket?'.$param)->TimeoutIn(10);
+						$response=dd::try_http_query($response);
             if ($response->hasErrors()){
             	var_dump($response);
             	exit;
