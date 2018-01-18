@@ -2,6 +2,7 @@
 namespace Woldy\ddsdk\Components;
 use Cache;
 use Httpful\Request;
+use DD;
 class Chat{
 	public static function getChat($ACCESS_TOKEN,$chatid){
             $param=http_build_query(

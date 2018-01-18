@@ -3,8 +3,9 @@ namespace Woldy\ddsdk\Components;
 use Cache;
 use Storage;
 use Httpful\Request;
-class Callback{
+use DD;
 
+class Callback{
 	public static function reg_callback($accesstoken,$url,$token,$aes_key,$call_back_tag){
         $param=[
             "call_back_tag"=> $call_back_tag,
