@@ -58,9 +58,9 @@ class dd
           $response->body=json_decode($response->body);
       }
 
-      if ($response->body->errcode != 0){
-
-      }
+      // if ($response->body->errcode != 0){
+      //
+      // }
 
       return $response;
     }
