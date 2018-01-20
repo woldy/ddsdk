@@ -10,7 +10,7 @@ namespace Woldy\ddsdk\Components;
 
 use Cache;
 use Httpful\Request;
-use DD;
+use Woldy\ddsdk\Components\Util;
 
 class Process
 {
@@ -26,7 +26,7 @@ class Process
             ->TimeoutIn(10)
             ->body($params)
             ->sends("application/x-www-form-urlencoded");
-        $response=dd::try_http_query($response);
+        $response=Util::try_http_query($response);
 
 
 
@@ -55,7 +55,7 @@ class Process
             ->TimeoutIn(10)
             ->body($params)
             ->sends("application/x-www-form-urlencoded");
-        $response=dd::try_http_query($response);
+        $response=Util::try_http_query($response);
 
 
 

@@ -4,7 +4,7 @@ use Cache;
 use Httpful\Request;
 use Woldy\ddsdk\Components\Group;
 use Log;
-use DD;
+use Woldy\ddsdk\Components\Util;
 class group{
     /**
      * 获取所有部门
@@ -23,7 +23,7 @@ class group{
                     )
                 );
                 $response = Request::get('https://oapi.dingtalk.com/department/list?'.$param)->TimeoutIn(10);
-								$response=dd::try_http_query($response);
+								$response=Util::try_http_query($response);
 
                 $allgroups = $response->body->department;
                 $groups=[];
@@ -176,7 +176,7 @@ class group{
             ->TimeoutIn(10)
             ->body(json_encode($param),'json')
             ->sends('application/json');
-            $response=dd::try_http_query($response);
+            $response=Util::try_http_query($response);
 
             if ($response->hasErrors()){
                 // var_dump($response);
@@ -281,7 +281,7 @@ class group{
             // echo 'x';
             // echo "\nhttps://oapi.dingtalk.com/user/list?".$param;
             $response = Request::get('https://oapi.dingtalk.com/user/list?'.$param)->TimeoutIn(10);
-						$response=dd::try_http_query($response);
+						$response=Util::try_http_query($response);
 
             // echo 'o';
             if ($response->hasErrors()){
@@ -316,7 +316,7 @@ class group{
                 )
             );
             $response = Request::get('https://oapi.dingtalk.com/department/delete?'.$param)->TimeoutIn(10);
-						$response=dd::try_http_query($response);
+						$response=Util::try_http_query($response);
             if ($response->hasErrors()){
                 // var_dump($response);
                 // exit;
@@ -345,7 +345,7 @@ class group{
                 ->TimeoutIn(10)
                 ->body(json_encode($group))
                 ->sends('application/json');
-                $response=dd::try_http_query($response);
+                $response=Util::try_http_query($response);
             if ($response->hasErrors()){
                // echo $group['id'].',';
                      var_dump($group);
@@ -372,7 +372,7 @@ class group{
                 )
             );
             $response = Request::get('https://oapi.dingtalk.com/department/get?'.$param)->TimeoutIn(10);
-						$response=dd::try_http_query($response);
+						$response=Util::try_http_query($response);
             if ($response->hasErrors()){
                 var_dump($response);
                 exit;

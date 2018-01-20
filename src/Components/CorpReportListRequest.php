@@ -2,7 +2,7 @@
 
 
 namespace Woldy\ddsdk\Components;
-use DD;
+use Woldy\ddsdk\Components\Util;
 
 class CorpReportListRequest
 {

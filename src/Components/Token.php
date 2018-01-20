@@ -2,7 +2,7 @@
 namespace Woldy\ddsdk\Components;
 use Cache;
 use Httpful\Request;
-use DD;
+use Woldy\ddsdk\Components\Util;
 class Token{
 	private $AgentID;
 	private $CorpID;
@@ -34,7 +34,7 @@ class Token{
         if (!$accessToken){
         	//die('https://oapi.dingtalk.com/gettoken?'.$param);
           $response = Request::get('https://oapi.dingtalk.com/gettoken?'.$param)->TimeoutIn(10);
-					$response=dd::try_http_query($response);
+					$response=Util::try_http_query($response);
         	if ($response->hasErrors()){
             	var_dump($response);
             	exit;
@@ -75,7 +75,7 @@ class Token{
             //die('https://oapi.dingtalk.com/gettoken?'.$param);
 
             $response = Request::get('https://oapi.dingtalk.com/sns/gettoken?'.$param)->TimeoutIn(10);
-						$response=dd::try_http_query($response);
+						$response=Util::try_http_query($response);
             if ($response->hasErrors()){
                 var_dump($response);
                 exit;
@@ -115,7 +115,7 @@ class Token{
 								->TimeoutIn(10)
                 ->body($param)
                 ->sends('application/json');
-            $response=dd::try_http_query($response);
+            $response=Util::try_http_query($response);
             // if ($response->hasErrors()){
             //     echo 'getPersistent';
             //     var_dump($response);
@@ -156,7 +156,7 @@ class Token{
 								->TimeoutIn(10)
                 ->body($param)
                 ->sends('application/json');
-            $response=dd::try_http_query($response);
+            $response=Util::try_http_query($response);
             // if ($response->hasErrors()){
             //     echo 'getSnsToken';
             //     var_dump($response);
@@ -194,7 +194,7 @@ class Token{
         if ( !$jsticket) //傻逼钉钉的ticket缓存后总有问题，老子不缓存了。
         {
             $response = Request::get('https://oapi.dingtalk.com/get_jsapi_ticket?'.$param)->TimeoutIn(10);
-						$response=dd::try_http_query($response);
+						$response=Util::try_http_query($response);
             if ($response->hasErrors()){
             	var_dump($response);
             	exit;

@@ -2,7 +2,7 @@
 namespace Woldy\ddsdk\Components;
 use Cache;
 use Httpful\Request;
-use DD;
+use Woldy\ddsdk\Components\Util;
 class Chat{
 	public static function getChat($ACCESS_TOKEN,$chatid){
             $param=http_build_query(
@@ -13,7 +13,7 @@ class Chat{
             );
 
             $response = Request::get('https://oapi.dingtalk.com/chat/get?'.$param)->TimeoutIn(10);
-					$response=dd::try_http_query($response);
+					$response=Util::try_http_query($response);
           if ($response->hasErrors()){
             	var_dump($response);
             	exit;
@@ -50,7 +50,7 @@ class Chat{
 						->TimeoutIn(10)
             ->body(json_encode($param))
             ->sends('application/json');
-        $response=dd::try_http_query($response);
+        $response=Util::try_http_query($response);
         if ($response->hasErrors()){
             var_dump($response);
             exit;
@@ -80,7 +80,7 @@ class Chat{
         $response = Request::post('https://oapi.dingtalk.com/chat/create?access_token='.$ACCESS_TOKEN)
             ->body(json_encode($param))
             ->sends('application/json');
-        $response=dd::try_http_query($response);
+        $response=Util::try_http_query($response);
         if ($response->hasErrors()){
             var_dump($response);
             exit;

@@ -2,27 +2,27 @@
 namespace Woldy\ddsdk\Components;
 use Cache;
 use Httpful\Request;
-use DD;
+use Woldy\ddsdk\Components\Util;
 class Work{
 	public static function getAttend($ACCESS_TOKEN,$userid,$from='',$to=''){
-						if(empty($from) || empty($to)){
-							$from=date("Y-m-d").' 00:00:00';
-							$to=date("Y-m-d").' 23:59:59';
-						}
+			if(empty($from) || empty($to)){
+				$from=date("Y-m-d").' 00:00:00';
+				$to=date("Y-m-d").' 23:59:59';
+			}
 
             $param=[
         		  'userId' =>$userid,
 							'workDateFrom'=>$from,
 							'workDateTo'=>$to,
         		  'access_token'=>$ACCESS_TOKEN
-        	   ];
+        	];
 
 
-						$response = Request::post('https://oapi.dingtalk.com/attendance/list?access_token='.$ACCESS_TOKEN)
+			$response = Request::post('https://oapi.dingtalk.com/attendance/list?access_token='.$ACCESS_TOKEN)
 								->TimeoutIn(10)
 		            ->body(json_encode($param))
 		            ->sends('application/json');
-		            $response=dd::try_http_query($response);
+		    $response=Util::try_http_query($response);
 
 
             if ($response->hasErrors()){
@@ -54,7 +54,7 @@ class Work{
 		->TimeoutIn(10)
 		->body(json_encode($param),'json')
 		->sends('application/json');
-		$response=dd::try_http_query($response);
+		$response=Util::try_http_query($response);
 
 		if ($response->hasErrors()){
 				// var_dump($response);
@@ -78,7 +78,7 @@ class Work{
 				$response = Request::get("https://oapi.dingtalk.com/checkin/record?access_token={$accessToken}&department_id={$departmentId}&start_time={$startTime}&end_time={$endTime}")
 						->TimeoutIn(10)
 						->sends('application/json');
-					$response=dd::try_http_query($response);
+					$response=Util::try_http_query($response);
 
 				if ($response->hasErrors()){
 						var_dump($response);

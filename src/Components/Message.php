@@ -5,7 +5,7 @@ use Log;
 use Storage;
 use Httpful\Request;
 use App\Models\Ding\DingUsersModel;
-use DD;
+use Woldy\ddsdk\Components\Util;
 class Message{
     /**
      * 根据加密串发送企业消息。
@@ -95,7 +95,7 @@ class Message{
                     ->TimeoutIn(10)
                     ->attach(array('media' =>$tmppath))
                     ->sends('upload');
-        $response=dd::try_http_query($response);
+        $response=Util::try_http_query($response);
         if($response->body->errcode!=0){
 						Log::info('ding-msg-up-file-error:'.$path);
             return $response->body;
@@ -137,7 +137,7 @@ class Message{
 					->TimeoutIn(10)
 					->body(json_encode($param))
 					->sends('application/json');
-			$response=dd::try_http_query($response);
+			$response=Util::try_http_query($response);
 			if ($response->hasErrors()){
 			}
 
@@ -198,7 +198,7 @@ class Message{
             ->TimeoutIn(10)
             ->body(json_encode($param))
             ->sends('application/json');
-        $response=dd::try_http_query($response);
+        $response=Util::try_http_query($response);
         if ($response->hasErrors()){
         }
 

@@ -1,10 +1,10 @@
 <?php
 namespace Woldy\ddsdk\Components;
 use Httpful\Request;
-use DD;
+use Woldy\ddsdk\Components\Util;
 class App{
 	public static function getApp($ACCESS_TOKEN,$agentId){
-						$param=array(
+			$param=array(
         		  'agentId' =>$agentId,
         		  'access_token'=>$ACCESS_TOKEN
         	   );
@@ -13,7 +13,7 @@ class App{
             ->body(json_encode($param),'json')
             ->sends('application/json')
 						->TimeoutIn(10);
-            $response=dd::try_http_query($response);
+            $response=Util::try_http_query($response);
 
 
 
@@ -28,7 +28,7 @@ class App{
             ->body(json_encode($app),'json')
             ->sends('application/json')
 						->TimeoutIn(10);
-            $response=dd::try_http_query($response);
+            $response=Util::try_http_query($response);
 
             if ($response->hasErrors()){
             	// var_dump($response);
