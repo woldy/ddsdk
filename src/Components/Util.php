@@ -29,7 +29,7 @@ class Util {
       //     $response->body=json_decode($response->body);
       // }
 
-      if ($response->body->errcode == 90002){
+      if (!empty($response->body) && $response->body->errcode == 90002){
         echo "好像超限了，60秒后重试".$response->uri."\n";
         sleep(60);
         return self::try_http_query($response,3,$exit,$url);
