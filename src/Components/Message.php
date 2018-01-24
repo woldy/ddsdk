@@ -72,7 +72,7 @@ class Message{
              }
          }
 
-	   return self::sendMessageNew($touser,$toparty,$content,$AgentID,$ACCESS_TOKEN,$type,$media);
+	   return self::sendMessage($touser,$toparty,$content,$AgentID,$ACCESS_TOKEN,$type,$media);
 
 	}
 
