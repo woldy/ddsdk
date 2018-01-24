@@ -104,7 +104,8 @@ class Message{
                     ->sends('upload')
                     ->send();
         if($response->body->errcode!=0){
-                        Log::info('ding-msg-up-file-error:'.$path);
+
+            Log::info('ding-msg-up-file-error:'.$path.json_encode($response->body));
             return $response->body;
         }
 
