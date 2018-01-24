@@ -72,7 +72,7 @@ class Message{
              }
          }
 
-	   return self::sendMessage($touser,$toparty,$content,$AgentID,$ACCESS_TOKEN,$type,$media);
+	   return self::sendMessageNew($touser,$toparty,$content,$AgentID,$ACCESS_TOKEN,$type,$media);
 
 	}
 
@@ -81,27 +81,35 @@ class Message{
 
     }
 
-    public static function upLoadFile($ACCESS_TOKEN,$path='',$type='image'){
+    public static function upLoadFile($ACCESS_TOKEN,$path='',$type='image'){//$type=image|voice|file
 
         if(preg_match("/cli/i", php_sapi_name())){
-            $tmppath="./storage/app/tmp/dingup_".str_random(32).".jpg";
+            $tmppath="./storage/app/tmp/".basename($path);
         }else{
-            $tmppath=$_SERVER['DOCUMENT_ROOT']."/../storage/app/tmp/dingup_".str_random(32).".jpg";
+            $tmppath=$_SERVER['DOCUMENT_ROOT']."/../storage/app/tmp/".basename($path);
+        }
+
+        //避免$path=/Users/xiafen/web/test.xf.com/b.docx这类绝对路径
+        if(strpos($path, "http://")!=0 && strpos($path, "https://")!=0){
+            echo "media_url请选用http或者https开头的媒体路径";die;
         }
 
 
         file_put_contents($tmppath,file_get_contents($path));
+
+
         $response=Request::post('https://oapi.dingtalk.com/media/upload?access_token='.$ACCESS_TOKEN."&type={$type}")
                     ->TimeoutIn(10)
                     ->attach(array('media' =>$tmppath))
-                    ->sends('upload');
-        $response=Util::try_http_query($response);
+                    ->sends('upload')
+                    ->send();
         if($response->body->errcode!=0){
-						Log::info('ding-msg-up-file-error:'.$path);
+                        Log::info('ding-msg-up-file-error:'.$path);
             return $response->body;
         }
 
-				unlink($tmppath);
+        unlink($tmppath);
+
         return $response->body;
     }
 
@@ -210,6 +218,84 @@ class Message{
         return $response->body;
 
 	}
+
+
+
+        //新接口
+    public static function sendMessageNew($touser,$toparty,$content,$AgentID,$ACCESS_TOKEN,$type='text',$media=''){
+
+
+        if($type=='text'){
+            if(mb_detect_encoding( $content,'UTF-8') !='UTF-8'){
+                $content=iconv('GB2312', 'UTF-8', $content);
+            }
+            $data=array("content"=>$content);
+        }else if($type=='link'){
+            $data=json_decode($content,true);
+            if(!empty($media)){
+                $data['picUrl']=$media->media_id;
+            }
+        }else if($type=='oa'){
+            $data=json_decode($content,true);
+            if(!empty($media)){
+                $data['body']['image']=$media->media_id;
+            }
+        }else if($type=='image'){
+            $data=array("media_id"=>$media->media_id);
+        }else if($type=='voice'){
+            $data=json_decode($content,true);
+            if(!empty($media)){
+                $data['media_id']=$media->media_id;
+            }
+        }else if($type=='file'){
+            $data=array("media_id"=>$media->media_id);
+        }
+        //else if($type=='makedown'){}
+        else if($type=='action_card'){
+
+        }else{
+            $data=json_decode($content,true);
+        }
+
+
+        $param=array(
+            'userid_list' =>$touser,
+            'dept_id_list'=>$toparty,
+            'agent_id'=>$AgentID,
+            'msgtype'=>$type,
+            'msgcontent'=>json_encode($data),
+            //公共参数
+            'method'=>'dingtalk.corp.message.corpconversation.asyncsend',
+            'timestamp'=>date('Y-m-d H:i:s'),
+            'format'=>'json',
+            'session'=>$ACCESS_TOKEN,
+            'v'=>'2.0',
+        );
+
+
+        $response = Request::post('https://eco.taobao.com/router/rest')
+            ->TimeoutIn(10)
+            ->body($param)
+            ->sends("application/x-www-form-urlencoded");
+
+        $response=Util::try_http_query($response);
+
+
+
+
+        if ($response->hasErrors()){
+        }
+
+        if(!is_object($response->body)){
+            $response->body=json_decode($response->body);
+        }
+
+        if ($response->body->errcode != 0){
+        }
+
+        return $response->body;
+
+    }
 
     /**
      * 加密串函数
