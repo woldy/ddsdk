@@ -35,7 +35,7 @@ class Util {
           sleep(60);
           return self::try_http_query($response,3,$exit,$url);
         } 
-      }catch(ErrorException $e){
+      }catch(Exception $e){
         Log::info(json_encode($response->body));
       }
 
