@@ -5,6 +5,7 @@ namespace Woldy\ddsdk;
 use App\Http\Common\ArrayToolkit;
 use Illuminate\Config\Repository;
 use Woldy\ddsdk\Components\CorpReportListRequest;
+use Woldy\ddsdk\Components\Media;
 use Woldy\ddsdk\Components\Token;
 use Woldy\ddsdk\Components\Message;
 use Woldy\ddsdk\Components\Contacts;
@@ -567,6 +568,39 @@ class dd
         if (ArrayToolkit::requireds($params, $necessaryArrays)) {
             return Process::getProcessData($accessToken, $params);
         }
+    }
+
+    /**
+     * 获取媒体文件
+     * @param $params
+     * @return mixed
+     */
+    public static function getMedia($params)
+    {
+        $accessToken = self::$ACCESS_TOKEN;
+        $necessaryArrays = [
+            'mediaId',
+        ];
+
+
+        if(ArrayToolkit::requireds($params, $necessaryArrays)) {
+            $content = Media::getMedia($accessToken, $params);
+
+            return $content;
+        }
+    }
+
+
+    /**
+     * 上传媒体文件
+     * @param $path
+     * @param $type
+     * @return array|object|string
+     */
+
+    public static function upLoadMedia($path, $type)
+    {
+        return Message::upLoadFile(self::$ACCESS_TOKEN, $path, $type);
     }
 
 }
