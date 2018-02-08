@@ -17,7 +17,7 @@ class Util {
               return false;
             }
           }else{
-            echo "这次请求不太行，正在重试".$response->uri."\n";
+            Log::info("这次请求不太行，正在重试".$response->uri."\n");
             return self::try_http_query($response,--$retry,$exit,$url);
           }
       }
@@ -29,7 +29,7 @@ class Util {
       //     $response->body=json_decode($response->body);
       // }
 
-      
+
 
       if(isset($response->body->errcode)){
         if ($response->body->errcode == 90002){
@@ -41,7 +41,7 @@ class Util {
         }
       }
 
-  
+
 
 
       return $response;
