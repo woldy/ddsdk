@@ -33,8 +33,8 @@ class Contacts{
                 $response->body=json_decode($response->body);
             }
         	if ($response->body->errcode != 0){
-            Log::info('code_error'.$response->body.'---'.$CODE);
-            return $response->body;
+                Log::info('code_error'.json_encode($response->body,JSON_UNESCAPED_UNICODE).'---'.$CODE);
+                return $response->body;
         	}
             $userid = $response->body->userid;
 
@@ -64,10 +64,10 @@ class Contacts{
             	exit;
         	}
             if(!is_object($response->body)){
-            $response->body=json_decode($response->body);
+                $response->body=json_decode($response->body);
             }
         	if ($response->body->errcode != 0){
-            Log::alert($param.json_encode($response->body));
+                Log::alert($param.json_encode($response->body));
         	}
 
 
