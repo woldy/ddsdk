@@ -190,7 +190,7 @@ class CorpReportListRequest
             $httpStatusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
             if (200 !== $httpStatusCode)
             {
-                throw new Exception($reponse,$httpStatusCode);
+                throw new \Exception($reponse,$httpStatusCode);
             }
         }
         curl_close($ch);
