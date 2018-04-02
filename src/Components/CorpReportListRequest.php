@@ -183,7 +183,7 @@ class CorpReportListRequest
 
         if (curl_errno($ch))
         {
-            throw new Exception(curl_error($ch),0);
+            throw new \Exception(curl_error($ch),0);
         }
         else
         {
