@@ -8,7 +8,7 @@ class Util {
       $resp='';
       try {
            $resp= $response->send();
-      } catch (ConnectionErrorException $e) {
+      } catch ( \Exception $e) {
           if($retry<1){
             if($exit){
               die("网络不稳啊".$url."\n");
