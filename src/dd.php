@@ -542,6 +542,7 @@ class dd
             'originator_user_id',
             'dept_id',
             'approvers',
+            'cc_list',
             'form_component_values'
         ];
 
