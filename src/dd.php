@@ -20,6 +20,7 @@ use Woldy\ddsdk\Components\Process;
 use Woldy\ddsdk\Components\Util;
 use Httpful\Exception\ConnectionErrorException;
 use Httpful\Request;
+use Log;
 
 class dd
 {
@@ -545,7 +546,8 @@ class dd
             'cc_list',
             'form_component_values'
         ];
-
+        Log::info('发送钉钉参数');
+        Log::info(json_encode($params));
         if (ArrayToolkit::requireds($params, $necessaryArrays)) {
             return Process::createInstance($accessToken, $params);
         }

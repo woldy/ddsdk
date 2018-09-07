@@ -11,6 +11,7 @@ namespace Woldy\ddsdk\Components;
 use Cache;
 use Httpful\Request;
 use Woldy\ddsdk\Components\Util;
+use Log;
 
 class Process
 {
@@ -21,6 +22,8 @@ class Process
         $params['format'] = 'json';
         $params['session'] = $accessToken;
         $params['v'] = '2.0';
+        Log::info('发送钉钉真实参数');
+        Log::info(json_encode($params));
 
         $response = Request::post('https://eco.taobao.com/router/rest')
             ->TimeoutIn(10)
