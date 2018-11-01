@@ -333,14 +333,13 @@ class Contacts{
             $response = Request::get('https://oapi.dingtalk.com/user/delete?'.$param)->TimeoutIn(10);
             $response=Util::try_http_query($response);
             if ($response->hasErrors()){
-               // var_dump($response);
-               // exit;
+
             }
         if(!is_object($response->body)){
             $response->body=json_decode($response->body);
         }
             if ($response->body->errcode != 0){
-                var_dump($response->body);
+                Log::error(json_encode($response->body));
             }
         }
 
